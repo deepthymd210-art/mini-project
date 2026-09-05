@@ -1,0 +1,854 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Yield Prediction | Kerala Crop AI</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     NAVBAR
+====================================================== -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌱 Kerala Crop AI
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="{% url 'yield_prediction' %}"
+           class="active">
+            Predict Yield
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ======================================================
+     PAGE HEADER
+====================================================== -->
+
+<section class="page-header">
+
+    <span class="badge">
+        AI CROP ANALYSIS
+    </span>
+
+    <h1>
+        Crop Yield Prediction
+    </h1>
+
+    <p>
+        Enter your farming conditions to predict
+        expected crop production.
+    </p>
+
+</section>
+
+
+
+<!-- ======================================================
+     PREDICTION SECTION
+====================================================== -->
+
+<section class="prediction-section">
+
+    <div class="prediction-card">
+
+
+        <!-- ==================================================
+             FORM
+        ================================================== -->
+
+        <form method="POST"
+              id="predictionForm">
+
+            {% csrf_token %}
+
+
+            <!-- ==================================================
+                 CROP INFORMATION
+            ================================================== -->
+
+            <div class="section-title">
+
+                <span>🌱</span>
+
+                <div>
+
+                    <h2>
+                        Crop Information
+                    </h2>
+
+                    <p>
+                        Select the crop you want to grow
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CROP -->
+
+            <div class="form-group">
+
+                <label>
+                    Crop
+                </label>
+
+                <select name="crop" required>
+
+                    <option value="">
+                        Select Crop
+                    </option>
+
+                    <option value="Tapioca"
+                        {% if request.POST.crop == "Tapioca" %}selected{% endif %}>
+                        Tapioca
+                    </option>
+
+                    <option value="Paddy"
+                        {% if request.POST.crop == "Paddy" %}selected{% endif %}>
+                        Paddy
+                    </option>
+
+                    <option value="Turmeric"
+                        {% if request.POST.crop == "Turmeric" %}selected{% endif %}>
+                        Turmeric
+                    </option>
+
+                    <option value="Coffee"
+                        {% if request.POST.crop == "Coffee" %}selected{% endif %}>
+                        Coffee
+                    </option>
+
+                    <option value="Rubber"
+                        {% if request.POST.crop == "Rubber" %}selected{% endif %}>
+                        Rubber
+                    </option>
+
+                    <option value="Plantain"
+                        {% if request.POST.crop == "Plantain" %}selected{% endif %}>
+                        Plantain
+                    </option>
+
+                    <option value="Betel leaves"
+                        {% if request.POST.crop == "Betel leaves" %}selected{% endif %}>
+                        Betel Leaves
+                    </option>
+
+                    <option value="Cocoa"
+                        {% if request.POST.crop == "Cocoa" %}selected{% endif %}>
+                        Cocoa
+                    </option>
+
+                    <option value="Cardamom"
+                        {% if request.POST.crop == "Cardamom" %}selected{% endif %}>
+                        Cardamom
+                    </option>
+
+                    <option value="Pappaya"
+                        {% if request.POST.crop == "Pappaya" %}selected{% endif %}>
+                        Pappaya
+                    </option>
+
+                    <option value="Coconut"
+                        {% if request.POST.crop == "Coconut" %}selected{% endif %}>
+                        Coconut
+                    </option>
+
+                    <option value="Mango"
+                        {% if request.POST.crop == "Mango" %}selected{% endif %}>
+                        Mango
+                    </option>
+
+                    <option value="Jack"
+                        {% if request.POST.crop == "Jack" %}selected{% endif %}>
+                        Jack
+                    </option>
+
+                    <option value="Banana"
+                        {% if request.POST.crop == "Banana" %}selected{% endif %}>
+                        Banana
+                    </option>
+
+                    <option value="Ginger"
+                        {% if request.POST.crop == "Ginger" %}selected{% endif %}>
+                        Ginger
+                    </option>
+
+                    <option value="Cloves"
+                        {% if request.POST.crop == "Cloves" %}selected{% endif %}>
+                        Cloves
+                    </option>
+
+                    <option value="Nutmeg"
+                        {% if request.POST.crop == "Nutmeg" %}selected{% endif %}>
+                        Nutmeg
+                    </option>
+
+                    <option value="Arecanut"
+                        {% if request.POST.crop == "Arecanut" %}selected{% endif %}>
+                        Arecanut
+                    </option>
+
+                    <option value="Pepper"
+                        {% if request.POST.crop == "Pepper" %}selected{% endif %}>
+                        Pepper
+                    </option>
+
+                    <option value="Cashew"
+                        {% if request.POST.crop == "Cashew" %}selected{% endif %}>
+                        Cashew
+                    </option>
+
+                    <option value="Pineapple"
+                        {% if request.POST.crop == "Pineapple" %}selected{% endif %}>
+                        Pineapple
+                    </option>
+
+                    <option value="Tea"
+                        {% if request.POST.crop == "Tea" %}selected{% endif %}>
+                        Tea
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 LAND AREA
+            ================================================== -->
+
+            <div class="section-title">
+
+                <span>📐</span>
+
+                <div>
+
+                    <h2>
+                        Land Area
+                    </h2>
+
+                    <p>
+                        Enter the cultivation area
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="form-grid">
+
+
+                <!-- AREA -->
+
+                <div class="form-group">
+
+                    <label>
+                        Area
+                    </label>
+
+                    <input type="number"
+                           name="area"
+                           step="0.01"
+                           min="0"
+                           value="{{ request.POST.area }}"
+                           placeholder="Example: 20"
+                           required>
+
+                </div>
+
+
+                <!-- UNIT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Unit
+                    </label>
+
+                    <select name="area_unit" required>
+
+                        <option value="">
+                            Select Unit
+                        </option>
+
+                        <option value="hectare"
+                            {% if request.POST.area_unit == "hectare" %}selected{% endif %}>
+                            Hectare
+                        </option>
+
+                        <option value="acre"
+                            {% if request.POST.area_unit == "acre" %}selected{% endif %}>
+                            Acre
+                        </option>
+
+                        <option value="cent"
+                            {% if request.POST.area_unit == "cent" %}selected{% endif %}>
+                            Cent
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 SOIL INFORMATION
+            ================================================== -->
+
+            <div class="section-title">
+
+                <span>🌍</span>
+
+                <div>
+
+                    <h2>
+                        Soil Information
+                    </h2>
+
+                    <p>
+                        Enter soil characteristics
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="form-grid">
+
+
+                <!-- SOIL TYPE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Soil Type
+                    </label>
+
+                    <select name="soil_type" required>
+
+                        <option value="">
+                            Select Soil Type
+                        </option>
+
+                        <option value="Loamy"
+                            {% if request.POST.soil_type == "Loamy" %}selected{% endif %}>
+                            Loamy
+                        </option>
+
+                        <option value="Clay"
+                            {% if request.POST.soil_type == "Clay" %}selected{% endif %}>
+                            Clay
+                        </option>
+
+                        <option value="Sandy"
+                            {% if request.POST.soil_type == "Sandy" %}selected{% endif %}>
+                            Sandy
+                        </option>
+
+                        <option value="Silty"
+                            {% if request.POST.soil_type == "Silty" %}selected{% endif %}>
+                            Silty
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- SOIL PH -->
+
+                <div class="form-group">
+
+                    <label>
+                        Soil pH
+                    </label>
+
+                    <input type="number"
+                           name="soil_ph"
+                           step="0.01"
+                           min="0"
+                           max="14"
+                           value="{{ request.POST.soil_ph }}"
+                           placeholder="Example: 6.5"
+                           required>
+
+                </div>
+
+
+
+                <!-- NITROGEN -->
+
+                <div class="form-group">
+
+                    <label>
+                        Nitrogen (kg/ha)
+                    </label>
+
+                    <input type="number"
+                           name="nitrogen"
+                           step="0.01"
+                           value="{{ request.POST.nitrogen }}"
+                           placeholder="Example: 80"
+                           required>
+
+                </div>
+
+
+
+                <!-- PHOSPHORUS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Phosphorus (kg/ha)
+                    </label>
+
+                    <input type="number"
+                           name="phosphorus"
+                           step="0.01"
+                           value="{{ request.POST.phosphorus }}"
+                           placeholder="Example: 40"
+                           required>
+
+                </div>
+
+
+
+                <!-- POTASSIUM -->
+
+                <div class="form-group">
+
+                    <label>
+                        Potassium (kg/ha)
+                    </label>
+
+                    <input type="number"
+                           name="potassium"
+                           step="0.01"
+                           value="{{ request.POST.potassium }}"
+                           placeholder="Example: 50"
+                           required>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 WEATHER CONDITIONS
+            ================================================== -->
+
+            <div class="section-title">
+
+                <span>☁️</span>
+
+                <div>
+
+                    <h2>
+                        Weather Conditions
+                    </h2>
+
+                    <p>
+                        Enter current or expected conditions
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="form-grid">
+
+
+                <!-- RAINFALL -->
+
+                <div class="form-group">
+
+                    <label>
+                        Rainfall (mm)
+                    </label>
+
+                    <input type="number"
+                           name="rainfall"
+                           step="0.01"
+                           value="{{ request.POST.rainfall }}"
+                           placeholder="Example: 1800"
+                           required>
+
+                </div>
+
+
+
+                <!-- TEMPERATURE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Temperature (°C)
+                    </label>
+
+                    <input type="number"
+                           name="temperature"
+                           step="0.01"
+                           value="{{ request.POST.temperature }}"
+                           placeholder="Example: 27"
+                           required>
+
+                </div>
+
+
+
+                <!-- HUMIDITY -->
+
+                <div class="form-group">
+
+                    <label>
+                        Humidity (%)
+                    </label>
+
+                    <input type="number"
+                           name="humidity"
+                           step="0.01"
+                           min="0"
+                           max="100"
+                           value="{{ request.POST.humidity }}"
+                           placeholder="Example: 80"
+                           required>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 FARMING CONDITIONS
+            ================================================== -->
+
+            <div class="section-title">
+
+                <span>💧</span>
+
+                <div>
+
+                    <h2>
+                        Farming Conditions
+                    </h2>
+
+                    <p>
+                        Select irrigation and season
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="form-grid">
+
+
+                <!-- IRRIGATION -->
+
+                <div class="form-group">
+
+                    <label>
+                        Irrigation Level
+                    </label>
+
+                    <select name="irrigation" required>
+
+                        <option value="">
+                            Select Irrigation
+                        </option>
+
+                        <option value="Low"
+                            {% if request.POST.irrigation == "Low" %}selected{% endif %}>
+                            Low
+                        </option>
+
+                        <option value="Medium"
+                            {% if request.POST.irrigation == "Medium" %}selected{% endif %}>
+                            Medium
+                        </option>
+
+                        <option value="High"
+                            {% if request.POST.irrigation == "High" %}selected{% endif %}>
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- SEASON -->
+
+                <div class="form-group">
+
+                    <label>
+                        Season
+                    </label>
+
+                    <select name="season" required>
+
+                        <option value="">
+                            Select Season
+                        </option>
+
+                        <option value="Kharif"
+                            {% if request.POST.season == "Kharif" %}selected{% endif %}>
+                            Kharif
+                        </option>
+
+                        <option value="Perennial"
+                            {% if request.POST.season == "Perennial" %}selected{% endif %}>
+                            Perennial
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 PREDICT BUTTON
+            ================================================== -->
+
+            <button type="submit"
+                    class="predict-button"
+                    id="predictButton">
+
+                <span>
+                    🔮 Predict Crop Yield
+                </span>
+
+            </button>
+
+
+        </form>
+
+
+
+        <!-- ==================================================
+             ERROR
+        ================================================== -->
+
+        {% if error %}
+
+        <div class="result error-result"
+             id="predictionResult">
+
+            <div class="result-icon">
+                ⚠️
+            </div>
+
+            <div>
+
+                <h3>
+                    Prediction Error
+                </h3>
+
+                <p>
+                    {{ error }}
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ==================================================
+             PREDICTION RESULT
+        ================================================== -->
+        {% if predicted_yield != None %}
+
+<div class="result-container" id="predictionResult">
+
+    <!-- Result Header -->
+    <div class="result-heading">
+        <div class="result-icon">🌾</div>
+
+        <div>
+            <p class="result-label">PREDICTION RESULT</p>
+
+            <h2>Crop Production Analysis</h2>
+
+            <p>
+                Estimated production based on the farming
+                conditions you entered.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ALL DETAILS INSIDE ONE BOX -->
+    <div class="result-info">
+
+        <div class="result-item">
+            <span class="result-emoji">🌱</span>
+            <div>
+                <span class="result-title">Crop</span>
+                <strong>{{ request.POST.crop }}</strong>
+            </div>
+        </div>
+
+        <div class="result-item">
+            <span class="result-emoji">📐</span>
+            <div>
+                <span class="result-title">Cultivated Area</span>
+                <strong>
+                    {{ area_value|floatformat:2 }} {{ area_unit }}
+                </strong>
+            </div>
+        </div>
+
+        <div class="result-item">
+            <span class="result-emoji">📦</span>
+            <div>
+                <span class="result-title">Expected Total Production</span>
+                <strong>
+                    {{ predicted_yield|floatformat:2 }} kg
+                </strong>
+            </div>
+        </div>
+
+        <div class="result-item">
+            <span class="result-emoji">⚖️</span>
+            <div>
+                <span class="result-title">Approximately</span>
+                <strong>
+                    {{ predicted_tonnes|floatformat:2 }} tonnes
+                </strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Crop Suitability -->
+    {% if crop_suitable %}
+
+    <div class="suitable-result">
+
+        <div class="status-icon">✓</div>
+
+        <div>
+            <h3>Crop is Suitable</h3>
+
+            <p>
+                The selected crop
+                <strong>{{ request.POST.crop }}</strong>
+                is suitable for the entered conditions.
+            </p>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="not-suitable-result">
+
+        <div class="status-icon">!</div>
+
+        <div>
+            <h3>Crop May Not Be Suitable</h3>
+
+            <p>
+                The selected crop
+                <strong>{{ request.POST.crop }}</strong>
+                may not be the best choice for these conditions.
+            </p>
+
+            {% if recommended_crop %}
+
+            <div class="recommendation">
+                <span>Recommended Crop</span>
+
+                <strong>
+                    🌱 {{ recommended_crop }}
+                </strong>
+            </div>
+
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Try Again -->
+    <button type="button"
+            class="again-button"
+            onclick="resetPrediction()">
+
+        ↻ Try Another Prediction
+
+    </button>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- ======================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script src="{% static 'js/script.js' %}">
+</script>
+
+
+</body>
+
+</html>

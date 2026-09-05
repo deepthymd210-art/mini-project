@@ -1,0 +1,393 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f8f4;
+    color: #26382a;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 850px;
+    margin: auto;
+    padding: 40px 20px 80px;
+}
+
+
+/* ================= FORM CARD ================= */
+
+.prediction-card {
+    background: white;
+    padding: 35px;
+    border-radius: 22px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    color: #26753c;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    color: #718074;
+}
+
+
+/* ================= FORM ================= */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d6dfd7;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3d9854;
+    box-shadow: 0 0 0 3px rgba(61,152,84,0.1);
+}
+
+
+/* ================= PREDICT BUTTON ================= */
+
+#predictButton {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 12px;
+    background: #2e8144;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#predictButton:hover {
+    background: #236b36;
+}
+
+/* ================= RESULT ================= */
+
+.result-section {
+    margin-top: 60px;
+    padding: 35px;
+    background: white;
+    border-radius: 22px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    animation: resultAppear 0.7s ease;
+}
+
+@keyframes resultAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+/* ============================================================
+   RESULT SECTION
+   ============================================================ */
+
+.result-section {
+    margin-top: 40px;
+    padding: 30px;
+    background: white;
+    border: 1px solid #d8e8db;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    animation: resultAppear 0.6s ease;
+}
+
+@keyframes resultAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ============================================================
+   RESULT HEADER
+   ============================================================ */
+
+.result-header {
+    margin-bottom: 25px;
+}
+
+.result-icon {
+    font-size: 42px;
+}
+
+.result-label {
+    margin: 5px 0;
+    color: #557563;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.result-header h2 {
+    margin: 5px 0;
+    color: #17351f;
+    font-size: 30px;
+}
+
+.result-header p {
+    margin-top: 5px;
+    color: #607564;
+    font-size: 16px;
+}
+
+
+/* ============================================================
+   PRODUCTION DETAILS
+   All four results stay inside ONE box
+   ============================================================ */
+
+.result-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 20px;
+}
+
+
+/* ============================================================
+   EACH RESULT LINE
+   ============================================================ */
+
+.result-line {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    padding: 18px 10px;
+
+    border-bottom: 1px solid #e5eee7;
+}
+
+
+/* Remove border from last result */
+
+.result-line:last-child {
+    border-bottom: none;
+}
+
+
+/* ============================================================
+   RESULT EMOJI
+   ============================================================ */
+
+.result-emoji {
+    font-size: 30px;
+    width: 45px;
+    min-width: 45px;
+    text-align: center;
+}
+
+
+/* ============================================================
+   RESULT TEXT
+   ============================================================ */
+
+.result-line div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.result-line span {
+    color: #607b68;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.result-line strong {
+    color: #19321f;
+    font-size: 20px;
+}
+
+
+/* ============================================================
+   CROP NAME
+   ============================================================ */
+
+.result-line:first-child strong {
+    color: #26753c;
+    font-size: 22px;
+}
+
+
+/* ============================================================
+   SUITABILITY SECTION
+   Separate box below production result
+   ============================================================ */
+
+.suitable,
+.not-suitable {
+    display: flex;
+    gap: 15px;
+
+    margin-top: 25px;
+    padding: 22px;
+
+    border-radius: 15px;
+}
+
+
+/* ============================================================
+   SUITABLE
+   ============================================================ */
+
+.suitable {
+    background: #eaf8ed;
+    border: 1px solid #b9dfc1;
+}
+
+
+/* ============================================================
+   NOT SUITABLE
+   ============================================================ */
+
+.not-suitable {
+    background: #fff7e4;
+    border: 1px solid #ead39b;
+}
+
+
+/* ============================================================
+   STATUS ICON
+   ============================================================ */
+
+.status {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+
+    border-radius: 50%;
+    background: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   SUITABILITY TEXT
+   ============================================================ */
+
+.suitable h3 {
+    color: #26753c;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.not-suitable h3 {
+    color: #9b6a00;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.suitable p,
+.not-suitable p {
+    color: #607564;
+    margin: 0;
+    line-height: 1.6;
+}
+
+
+/* ============================================================
+   RECOMMENDED CROP
+   ============================================================ */
+
+.recommended {
+    margin-top: 15px;
+    padding: 15px;
+
+    background: white;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.recommended span {
+    color: #777;
+    font-size: 14px;
+}
+
+.recommended strong {
+    font-size: 20px;
+    color: #26753c;
+}
+
+
+/* ============================================================
+   NEW PREDICTION BUTTON
+   ============================================================ */
+
+.new-prediction {
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+
+    border: 1px solid #2e8144;
+    border-radius: 12px;
+
+    background: white;
+    color: #26753c;
+
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.new-prediction:hover {
+    background: #eef8f0;
+}
+

@@ -1,0 +1,197 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Kerala Crop AI</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 Kerala Crop AI
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="{% url 'yield_prediction' %}">
+                Predict Yield
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="badge">
+                AI POWERED AGRICULTURE
+            </span>
+
+            <h1>
+                Smart Crop Yield
+                <span>Prediction</span>
+            </h1>
+
+            <p>
+                Predict crop yield using soil,
+                weather, irrigation and seasonal
+                conditions.
+            </p>
+
+            <a href="{% url 'yield_prediction' %}"
+               class="hero-button">
+
+                Start Prediction →
+
+            </a>
+
+        </div>
+
+
+        <div class="hero-card">
+
+            <div class="plant-icon">
+                🌾
+            </div>
+
+            <h3>
+                Smart Agriculture
+            </h3>
+
+            <p>
+                Data-driven crop decisions
+                for better farming.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+        <h2>
+            What Our System Provides
+        </h2>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    📊
+                </div>
+
+                <h3>
+                    Yield Prediction
+                </h3>
+
+                <p>
+                    Estimate expected crop yield
+                    in kg per hectare.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🌱
+                </div>
+
+                <h3>
+                    Crop Suitability
+                </h3>
+
+                <p>
+                    Check whether your selected
+                    crop is suitable.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    ☁️
+                </div>
+
+                <h3>
+                    Weather Analysis
+                </h3>
+
+                <p>
+                    Uses rainfall, temperature
+                    and humidity conditions.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    💧
+                </div>
+
+                <h3>
+                    Soil & Irrigation
+                </h3>
+
+                <p>
+                    Considers soil properties,
+                    nutrients and irrigation.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            © 2026 Kerala Crop AI |
+            AI-Based Crop Yield Prediction System
+        </p>
+
+    </footer>
+
+
+    <script src="{% static 'js/script.js' %}">
+    </script>
+
+</body>
+
+</html>
