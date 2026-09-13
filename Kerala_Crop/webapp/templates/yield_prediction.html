@@ -10,7 +10,9 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Crop Yield Prediction | Kerala Crop AI</title>
+    <title>
+        Crop Yield Prediction | Kerala Crop AI
+    </title>
 
     <link rel="stylesheet"
           href="{% static 'css/style.css' %}">
@@ -112,9 +114,6 @@
 
             </div>
 
-
-
-            <!-- CROP -->
 
             <div class="form-group">
 
@@ -267,11 +266,7 @@
             </div>
 
 
-
             <div class="form-grid">
-
-
-                <!-- AREA -->
 
                 <div class="form-group">
 
@@ -289,8 +284,6 @@
 
                 </div>
 
-
-                <!-- UNIT -->
 
                 <div class="form-group">
 
@@ -350,11 +343,8 @@
             </div>
 
 
-
             <div class="form-grid">
 
-
-                <!-- SOIL TYPE -->
 
                 <div class="form-group">
 
@@ -393,9 +383,6 @@
                 </div>
 
 
-
-                <!-- SOIL PH -->
-
                 <div class="form-group">
 
                     <label>
@@ -414,9 +401,6 @@
                 </div>
 
 
-
-                <!-- NITROGEN -->
-
                 <div class="form-group">
 
                     <label>
@@ -433,9 +417,6 @@
                 </div>
 
 
-
-                <!-- PHOSPHORUS -->
-
                 <div class="form-group">
 
                     <label>
@@ -451,9 +432,6 @@
 
                 </div>
 
-
-
-                <!-- POTASSIUM -->
 
                 <div class="form-group">
 
@@ -497,11 +475,8 @@
             </div>
 
 
-
             <div class="form-grid">
 
-
-                <!-- RAINFALL -->
 
                 <div class="form-group">
 
@@ -519,9 +494,6 @@
                 </div>
 
 
-
-                <!-- TEMPERATURE -->
-
                 <div class="form-group">
 
                     <label>
@@ -537,9 +509,6 @@
 
                 </div>
 
-
-
-                <!-- HUMIDITY -->
 
                 <div class="form-group">
 
@@ -585,11 +554,8 @@
             </div>
 
 
-
             <div class="form-grid">
 
-
-                <!-- IRRIGATION -->
 
                 <div class="form-group">
 
@@ -622,9 +588,6 @@
 
                 </div>
 
-
-
-                <!-- SEASON -->
 
                 <div class="form-group">
 
@@ -670,7 +633,6 @@
 
             </button>
 
-
         </form>
 
 
@@ -707,137 +669,350 @@
 
 
         <!-- ==================================================
-             PREDICTION RESULT
+             CURRENT CROP RESULT
         ================================================== -->
+
         {% if predicted_yield != None %}
 
-<div class="result-container" id="predictionResult">
-
-    <!-- Result Header -->
-    <div class="result-heading">
-        <div class="result-icon">🌾</div>
-
-        <div>
-            <p class="result-label">PREDICTION RESULT</p>
-
-            <h2>Crop Production Analysis</h2>
-
-            <p>
-                Estimated production based on the farming
-                conditions you entered.
-            </p>
-        </div>
-    </div>
+        <div class="result-container"
+             id="predictionResult">
 
 
-    <!-- ALL DETAILS INSIDE ONE BOX -->
-    <div class="result-info">
+            <div class="result-heading">
 
-        <div class="result-item">
-            <span class="result-emoji">🌱</span>
-            <div>
-                <span class="result-title">Crop</span>
-                <strong>{{ request.POST.crop }}</strong>
+                <div class="result-icon">
+                    🌾
+                </div>
+
+                <div>
+
+                    <p class="result-label">
+                        PREDICTION RESULT
+                    </p>
+
+                    <h2>
+                        Crop Production Analysis
+                    </h2>
+
+                    <p>
+                        Estimated production based on the
+                        farming conditions you entered.
+                    </p>
+
+                </div>
+
             </div>
-        </div>
 
-        <div class="result-item">
-            <span class="result-emoji">📐</span>
-            <div>
-                <span class="result-title">Cultivated Area</span>
-                <strong>
-                    {{ area_value|floatformat:2 }} {{ area_unit }}
-                </strong>
+
+
+            <!-- ==================================================
+                 CURRENT CROP DETAILS
+            ================================================== -->
+
+            <div class="result-info">
+
+
+                <div class="result-item">
+
+                    <span class="result-emoji">
+                        🌱
+                    </span>
+
+                    <div>
+
+                        <span class="result-title">
+                            Crop
+                        </span>
+
+                        <strong>
+                            {{ request.POST.crop }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span class="result-emoji">
+                        📐
+                    </span>
+
+                    <div>
+
+                        <span class="result-title">
+                            Cultivated Area
+                        </span>
+
+                        <strong>
+                            {{ area_value|floatformat:2 }}
+                            {{ area_unit }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span class="result-emoji">
+                        📦
+                    </span>
+
+                    <div>
+
+                        <span class="result-title">
+                            Expected Total Production
+                        </span>
+
+                        <strong>
+                            {{ predicted_yield|floatformat:2 }} kg
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span class="result-emoji">
+                        ⚖️
+                    </span>
+
+                    <div>
+
+                        <span class="result-title">
+                            Approximately
+                        </span>
+
+                        <strong>
+                            {{ predicted_tonnes|floatformat:2 }}
+                            tonnes
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
             </div>
-        </div>
 
-        <div class="result-item">
-            <span class="result-emoji">📦</span>
-            <div>
-                <span class="result-title">Expected Total Production</span>
-                <strong>
-                    {{ predicted_yield|floatformat:2 }} kg
-                </strong>
+
+
+            <!-- ==================================================
+                 SUITABILITY
+            ================================================== -->
+
+            {% if crop_suitable %}
+
+            <div class="suitable-result">
+
+                <div class="status-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <h3>
+                        Crop is Suitable
+                    </h3>
+
+                    <p>
+
+                        The selected crop
+                        <strong>
+                            {{ request.POST.crop }}
+                        </strong>
+                        is the top crop predicted for
+                        these conditions.
+
+                    </p>
+
+                </div>
+
             </div>
-        </div>
 
-        <div class="result-item">
-            <span class="result-emoji">⚖️</span>
-            <div>
-                <span class="result-title">Approximately</span>
-                <strong>
-                    {{ predicted_tonnes|floatformat:2 }} tonnes
-                </strong>
-            </div>
-        </div>
+            {% else %}
 
-    </div>
+            <div class="not-suitable-result">
 
+                <div class="status-icon">
+                    !
+                </div>
 
-    <!-- Crop Suitability -->
-    {% if crop_suitable %}
+                <div>
 
-    <div class="suitable-result">
+                    <h3>
+                        Another Crop May Be Better
+                    </h3>
 
-        <div class="status-icon">✓</div>
+                    <p>
 
-        <div>
-            <h3>Crop is Suitable</h3>
+                        The selected crop
+                        <strong>
+                            {{ request.POST.crop }}
+                        </strong>
+                        is not the top crop predicted
+                        for these conditions.
 
-            <p>
-                The selected crop
-                <strong>{{ request.POST.crop }}</strong>
-                is suitable for the entered conditions.
-            </p>
-        </div>
+                    </p>
 
-    </div>
+                </div>
 
-    {% else %}
-
-    <div class="not-suitable-result">
-
-        <div class="status-icon">!</div>
-
-        <div>
-            <h3>Crop May Not Be Suitable</h3>
-
-            <p>
-                The selected crop
-                <strong>{{ request.POST.crop }}</strong>
-                may not be the best choice for these conditions.
-            </p>
-
-            {% if recommended_crop %}
-
-            <div class="recommendation">
-                <span>Recommended Crop</span>
-
-                <strong>
-                    🌱 {{ recommended_crop }}
-                </strong>
             </div>
 
             {% endif %}
+
+
+
+            <!-- ==================================================
+                 TOP 3 CROP RECOMMENDATIONS
+            ================================================== -->
+
+            {% if top_recommendations %}
+
+            <div class="recommended-production">
+
+
+                <!-- HEADER -->
+
+                <div class="recommended-production-header">
+
+                    <div class="recommended-production-icon">
+                        🏆
+                    </div>
+
+                    <div>
+
+                        <span class="recommended-production-label">
+                            TOP CROP RECOMMENDATIONS
+                        </span>
+
+                        <h3>
+                            Best Crops for Your Conditions
+                        </h3>
+
+                        <p>
+                            The crop recommendation model
+                            ranks the most suitable crops,
+                            while the yield model estimates
+                            their production.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     TOP 3
+                ================================================== -->
+
+                <div class="top-crop-list">
+
+
+                    {% for item in top_recommendations %}
+
+                    <div class="top-crop-card">
+
+
+                        <div class="top-crop-rank">
+
+                            {% if item.rank == 1 %}
+                                🏆
+                            {% elif item.rank == 2 %}
+                                🏆
+                            {% elif item.rank == 3 %}
+                                🏆
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="top-crop-details">
+
+                            <span class="top-crop-label">
+
+                                {% if item.rank == 1 %}
+                                    Best Crop
+                                {% elif item.rank == 2 %}
+                                    Best Crop
+                                {% elif item.rank == 3 %}
+                                    Best Crop
+                                {% endif %}
+
+                            </span>
+
+
+                            <h4>
+                                {{ item.crop }}
+                            </h4>
+
+
+                            <div class="top-crop-production">
+
+                                <span>
+                                    📦 Expected Production
+                                </span>
+
+                                <strong>
+                                    {{ item.production|floatformat:2 }}
+                                    kg
+                                </strong>
+
+                            </div>
+
+
+                            <div class="top-crop-tonnes">
+
+                                ⚖️
+                                {{ item.tonnes|floatformat:2 }}
+                                tonnes
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+                    {% endfor %}
+
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+
+            <!-- ==================================================
+                 TRY AGAIN
+            ================================================== -->
+
+            <button type="button"
+                    class="again-button"
+                    onclick="resetPrediction()">
+
+                ↻ Try Another Prediction
+
+            </button>
+
+
         </div>
+
+        {% endif %}
+
 
     </div>
 
-    {% endif %}
-
-
-    <!-- Try Again -->
-    <button type="button"
-            class="again-button"
-            onclick="resetPrediction()">
-
-        ↻ Try Another Prediction
-
-    </button>
-
-</div>
-
-{% endif %}
+</section>
 
 
 

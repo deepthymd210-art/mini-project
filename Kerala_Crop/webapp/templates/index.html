@@ -19,7 +19,9 @@
 
 <body>
 
-    <!-- NAVBAR -->
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
 
     <nav class="navbar">
 
@@ -29,7 +31,9 @@
 
         <div class="nav-links">
 
-            <a href="/">Home</a>
+            <a href="/" class="active">
+                Home
+            </a>
 
             <a href="{% url 'yield_prediction' %}">
                 Predict Yield
@@ -40,7 +44,9 @@
     </nav>
 
 
-    <!-- HERO -->
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
 
     <section class="hero">
 
@@ -91,7 +97,9 @@
     </section>
 
 
-    <!-- FEATURES -->
+    <!-- =====================================================
+         EXISTING FEATURES
+    ====================================================== -->
 
     <section class="features">
 
@@ -113,7 +121,7 @@
 
                 <p>
                     Estimate expected crop yield
-                    in kg per hectare.
+                    based on farming conditions.
                 </p>
 
             </div>
@@ -131,7 +139,7 @@
 
                 <p>
                     Check whether your selected
-                    crop is suitable.
+                    crop is suitable for your conditions.
                 </p>
 
             </div>
@@ -177,7 +185,383 @@
     </section>
 
 
-    <!-- FOOTER -->
+    <!-- =====================================================
+         FARMING TOOLS
+    ====================================================== -->
+
+    <section class="tools-section">
+
+        <div class="tools-heading">
+
+            <span class="badge">
+                FARMING TOOLS
+            </span>
+
+            <h2>
+                Useful Tools for Farmers
+            </h2>
+
+            <p>
+                Quickly estimate land requirements and
+                understand the conditions needed for different crops.
+            </p>
+
+        </div>
+
+
+        <div class="tools-grid">
+
+{% load static %}
+
+<!-- =================================================
+     TOOL 1 - PRODUCTION / LAND CALCULATOR
+================================================= -->
+
+<div class="tool-card">
+
+    <div class="tool-icon">
+        📐
+    </div>
+
+    <h3>
+        Production & Land Calculator
+    </h3>
+
+    <p class="tool-description">
+        Find how much of your available land is needed
+        to produce your desired quantity.
+    </p>
+
+    <div class="calculator-form">
+
+        <!-- =========================
+             CROP
+        ========================== -->
+
+        <div class="tool-form-group">
+
+            <label for="calcCrop">
+                Crop
+            </label>
+
+            <select id="calcCrop">
+
+    <option value="">
+        Select Crop
+    </option>
+
+    {% for crop in crop_list %}
+
+        <option value="{{ crop }}">
+            {{ crop }}
+        </option>
+
+    {% endfor %}
+
+</select>
+
+        </div>
+
+
+        <!-- =========================
+             AVAILABLE LAND
+        ========================== -->
+
+        <div class="tool-form-row">
+
+            <div class="tool-form-group">
+
+                <label for="availableLand">
+                    I Have
+                </label>
+
+                <input
+                    type="number"
+                    id="availableLand"
+                    placeholder="Example: 10"
+                    min="0"
+                    step="0.01"
+                >
+
+            </div>
+
+
+            <div class="tool-form-group">
+
+                <label for="landUnit">
+                    Land Unit
+                </label>
+
+                <select id="landUnit">
+
+                    <option value="cent">
+                        Cent
+                    </option>
+
+                    <option value="acre">
+                        Acre
+                    </option>
+
+                    <option value="hectare">
+                        Hectare
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             DESIRED PRODUCTION
+        ========================== -->
+
+        <div class="tool-form-row">
+
+            <div class="tool-form-group">
+
+                <label for="desiredProduction">
+                    I Want to Produce
+                </label>
+
+                <input
+                    type="number"
+                    id="desiredProduction"
+                    placeholder="Example: 20"
+                    min="0"
+                    step="0.01"
+                >
+
+            </div>
+
+
+            <div class="tool-form-group">
+
+                <label for="productionUnit">
+                    Production Unit
+                </label>
+
+                <select id="productionUnit">
+
+                    <option value="kg">
+                        kg
+                    </option>
+
+                    <option value="tonne">
+                        Tonne
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             CALCULATE BUTTON
+        ========================== -->
+
+        <button
+            type="button"
+            class="tool-button"
+            onclick="calculateLand()"
+        >
+            Calculate Land →
+        </button>
+
+
+        <!-- =========================
+             RESULT
+        ========================== -->
+
+        <div
+            id="landResult"
+            class="calculator-result"
+        ></div>
+
+    </div>
+
+</div>
+
+    <!-- =================================================
+                 TOOL 2 - CROP REQUIREMENT GUIDE
+            ================================================== -->
+
+            <div class="tool-card">
+
+                <div class="tool-icon">
+                    🌱
+                </div>
+
+                <h3>
+                    Crop Requirement Guide
+                </h3>
+
+                <p class="tool-description">
+                    Select a crop to view its recommended
+                    soil, nutrient and weather requirements.
+                </p>
+
+
+                <div class="calculator-form">
+
+                    <div class="tool-form-group">
+
+                        <label>
+                            Select Crop
+                        </label>
+
+                        <select
+                            id="requirementCrop"
+                            onchange="showCropRequirements()">
+
+                            <option value="">
+                                Select Crop
+                            </option>
+
+                           
+
+                        </select>
+
+                    </div>
+
+
+                    <div
+                        id="cropRequirements"
+                        class="requirements-result">
+
+                        <div class="requirement-placeholder">
+
+                            <span>
+                                🌿
+                            </span>
+
+                            <p>
+                                Select a crop to view
+                                recommended requirements.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HOW IT HELPS
+    ====================================================== -->
+
+    <section class="how-section">
+
+        <div class="how-heading">
+
+            <span class="badge">
+                SMART FARMING
+            </span>
+
+            <h2>
+                Make Better Farming Decisions
+            </h2>
+
+            <p>
+                Kerala Crop AI combines crop information,
+                soil conditions and production estimates
+                to help farmers plan cultivation.
+            </p>
+
+        </div>
+
+
+        <div class="how-grid">
+
+            <div class="how-card">
+
+                <span>
+                    01
+                </span>
+
+                <h3>
+                    Select Your Crop
+                </h3>
+
+                <p>
+                    Choose the crop you are planning
+                    to cultivate.
+                </p>
+
+            </div>
+
+
+            <div class="how-card">
+
+                <span>
+                    02
+                </span>
+
+                <h3>
+                    Check Requirements
+                </h3>
+
+                <p>
+                    View the soil, nutrient and
+                    environmental requirements.
+                </p>
+
+            </div>
+
+
+            <div class="how-card">
+
+                <span>
+                    03
+                </span>
+
+                <h3>
+                    Estimate Production
+                </h3>
+
+                <p>
+                    Calculate the approximate land
+                    needed for your target production.
+                </p>
+
+            </div>
+
+
+            <div class="how-card">
+
+                <span>
+                    04
+                </span>
+
+                <h3>
+                    Predict Yield
+                </h3>
+
+                <p>
+                    Use the AI prediction system for
+                    a more detailed estimate.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
 
     <footer>
 
@@ -189,8 +573,12 @@
     </footer>
 
 
-    <script src="{% static 'js/script.js' %}">
+
+
+ 
+
     </script>
+    <script src="{% static 'js/script.js' %}"> </script>
 
 </body>
 

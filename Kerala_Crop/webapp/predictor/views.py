@@ -2,23 +2,18 @@ import os
 import joblib
 import pandas as pd
 
-from django.shortcuts import render
 from django.conf import settings
+from django.shortcuts import render
 
 
 # ============================================================
-# MODEL DIRECTORY
+# MODEL PATHS
 # ============================================================
 
 MODEL_DIR = os.path.join(
     settings.BASE_DIR.parent,
     "models"
 )
-
-
-# ============================================================
-# MODEL PATHS
-# ============================================================
 
 YIELD_MODEL_PATH = os.path.join(
     MODEL_DIR,
@@ -41,9 +36,7 @@ try:
         YIELD_MODEL_PATH
     )
 
-    print(
-        "Yield model loaded successfully."
-    )
+    print("Yield model loaded successfully.")
 
 except Exception as e:
 
@@ -83,44 +76,15 @@ try:
         "Crop recommendation model loaded successfully."
     )
 
-    print(
-        "Recommendation features:",
-        crop_features
-    )
-
-    print(
-        "Soil types:",
-        list(
-            crop_feature_encoders[
-                "Soil_Type"
-            ].classes_
-        )
-    )
-
-    print(
-        "Irrigation levels:",
-        list(
-            crop_feature_encoders[
-                "Irrigation_Level"
-            ].classes_
-        )
-    )
-
-    print(
-        "Seasons:",
-        list(
-            crop_feature_encoders[
-                "Season"
-            ].classes_
-        )
-    )
-
 except Exception as e:
 
     crop_model = None
-    crop_feature_encoders = None
+
+    crop_feature_encoders = {}
+
     crop_target_encoder = None
-    crop_features = None
+
+    crop_features = []
 
     print(
         "Crop recommendation model loading error:",
@@ -128,11 +92,8 @@ except Exception as e:
     )
 
 
-# ============================================================
-# HOME
-# ============================================================
 
-def home(request):
+def index(request):
 
     return render(
         request,
@@ -140,8 +101,9 @@ def home(request):
     )
 
 
+
 # ============================================================
-# YIELD PREDICTION + CROP RECOMMENDATION
+# YIELD PREDICTION VIEW
 # ============================================================
 
 def yield_prediction(request):
@@ -150,15 +112,42 @@ def yield_prediction(request):
 
     predicted_tonnes = None
 
-    recommended_crop = None
+    top_recommendations = []
 
     crop_suitable = None
 
     error = None
 
-    area_value = None
 
-    area_unit = None
+    # ========================================================
+    # DEFAULT FORM VALUES
+    # ========================================================
+
+    crop = ""
+
+    area_value = ""
+
+    area_unit = "hectare"
+
+    soil_type = ""
+
+    soil_ph = ""
+
+    nitrogen = ""
+
+    phosphorus = ""
+
+    potassium = ""
+
+    rainfall = ""
+
+    temperature = ""
+
+    humidity = ""
+
+    irrigation = ""
+
+    season = ""
 
 
     # ========================================================
@@ -169,23 +158,23 @@ def yield_prediction(request):
 
         try:
 
-            # ==================================================
-            # GET USER INPUT
-            # ==================================================
+            # =================================================
+            # GET VALUES FROM HTML
+            # =================================================
 
             crop = request.POST.get(
                 "crop",
                 ""
             ).strip()
 
-            area_text = request.POST.get(
+            area_value = request.POST.get(
                 "area",
                 ""
             ).strip()
 
             area_unit = request.POST.get(
                 "area_unit",
-                ""
+                "hectare"
             ).strip()
 
             soil_type = request.POST.get(
@@ -193,37 +182,37 @@ def yield_prediction(request):
                 ""
             ).strip()
 
-            soil_ph_text = request.POST.get(
+            soil_ph = request.POST.get(
                 "soil_ph",
                 ""
             ).strip()
 
-            nitrogen_text = request.POST.get(
+            nitrogen = request.POST.get(
                 "nitrogen",
                 ""
             ).strip()
 
-            phosphorus_text = request.POST.get(
+            phosphorus = request.POST.get(
                 "phosphorus",
                 ""
             ).strip()
 
-            potassium_text = request.POST.get(
+            potassium = request.POST.get(
                 "potassium",
                 ""
             ).strip()
 
-            rainfall_text = request.POST.get(
+            rainfall = request.POST.get(
                 "rainfall",
                 ""
             ).strip()
 
-            temperature_text = request.POST.get(
+            temperature = request.POST.get(
                 "temperature",
                 ""
             ).strip()
 
-            humidity_text = request.POST.get(
+            humidity = request.POST.get(
                 "humidity",
                 ""
             ).strip()
@@ -239,196 +228,109 @@ def yield_prediction(request):
             ).strip()
 
 
-            # ==================================================
-            # REQUIRED CHECK
-            # ==================================================
+            # =================================================
+            # VALIDATION
+            # =================================================
 
             if not crop:
-
                 raise ValueError(
                     "Please select a crop."
                 )
 
-            if not area_text:
-
+            if not area_value:
                 raise ValueError(
-                    "Please enter the area."
-                )
-
-            if not area_unit:
-
-                raise ValueError(
-                    "Please select area unit."
+                    "Please enter cultivated area."
                 )
 
             if not soil_type:
-
                 raise ValueError(
                     "Please select soil type."
                 )
 
-            if not soil_ph_text:
-
+            if not soil_ph:
                 raise ValueError(
                     "Please enter soil pH."
                 )
 
-            if not nitrogen_text:
-
+            if not nitrogen:
                 raise ValueError(
                     "Please enter nitrogen value."
                 )
 
-            if not phosphorus_text:
-
+            if not phosphorus:
                 raise ValueError(
                     "Please enter phosphorus value."
                 )
 
-            if not potassium_text:
-
+            if not potassium:
                 raise ValueError(
                     "Please enter potassium value."
                 )
 
-            if not rainfall_text:
-
+            if not rainfall:
                 raise ValueError(
                     "Please enter rainfall."
                 )
 
-            if not temperature_text:
-
+            if not temperature:
                 raise ValueError(
                     "Please enter temperature."
                 )
 
-            if not humidity_text:
-
+            if not humidity:
                 raise ValueError(
                     "Please enter humidity."
                 )
 
             if not irrigation:
-
                 raise ValueError(
                     "Please select irrigation level."
                 )
 
             if not season:
-
                 raise ValueError(
                     "Please select season."
                 )
 
 
-            # ==================================================
-            # NUMERIC CONVERSION
-            # ==================================================
+            # =================================================
+            # CONVERT NUMERIC VALUES
+            # =================================================
 
-            area = float(
-                area_text
-            )
+            area = float(area_value)
 
-            soil_ph = float(
-                soil_ph_text
-            )
+            soil_ph_value = float(soil_ph)
 
-            nitrogen = float(
-                nitrogen_text
-            )
+            nitrogen_value = float(nitrogen)
 
-            phosphorus = float(
-                phosphorus_text
-            )
+            phosphorus_value = float(phosphorus)
 
-            potassium = float(
-                potassium_text
-            )
+            potassium_value = float(potassium)
 
-            rainfall = float(
-                rainfall_text
-            )
+            rainfall_value = float(rainfall)
 
-            temperature = float(
-                temperature_text
-            )
+            temperature_value = float(temperature)
 
-            humidity = float(
-                humidity_text
-            )
+            humidity_value = float(humidity)
 
 
-            # ==================================================
-            # AREA VALIDATION
-            # ==================================================
+            # =================================================
+            # AREA
+            # =================================================
 
             if area <= 0:
 
                 raise ValueError(
-                    "Area must be greater than 0."
+                    "Cultivated area must be greater than 0."
                 )
 
-            area_value = area
-
-
-            # ==================================================
-            # DATASET VALUES
-            # ==================================================
-
-            valid_soils = [
-                "Loamy",
-                "Clay",
-                "Sandy",
-                "Silty"
-            ]
-
-            valid_irrigation = [
-                "Low",
-                "Medium",
-                "High"
-            ]
-
-            valid_seasons = [
-                "Kharif",
-                "Perennial"
-            ]
-
-
-            if soil_type not in valid_soils:
-
-                raise ValueError(
-                    f"Invalid Soil Type: '{soil_type}'. "
-                    f"Use: {', '.join(valid_soils)}"
-                )
-
-
-            if irrigation not in valid_irrigation:
-
-                raise ValueError(
-                    f"Invalid Irrigation Level: '{irrigation}'. "
-                    f"Use: {', '.join(valid_irrigation)}"
-                )
-
-
-            if season not in valid_seasons:
-
-                raise ValueError(
-                    f"Invalid Season: '{season}'. "
-                    f"Use: {', '.join(valid_seasons)}"
-                )
-
-
-            # ==================================================
-            # AREA CONVERSION
-            # ==================================================
 
             if area_unit == "hectare":
 
                 area_hectare = area
 
                 area_cent = (
-                    area * 247.105
+                    area_hectare * 247.105
                 )
 
 
@@ -459,393 +361,410 @@ def yield_prediction(request):
                 )
 
 
-            # ==================================================
-            # ==================================================
-            # YIELD PREDICTION
-            # ==================================================
-            # ==================================================
+            # =================================================
+            # YIELD MODEL
+            # =================================================
 
             if yield_model is None:
 
                 raise ValueError(
-                    "Yield model could not be loaded."
+                    "Yield model is not available."
                 )
 
 
-            # ==================================================
-            # YIELD INPUT
-            # ==================================================
+            yield_input = pd.DataFrame([{
 
-            yield_input = pd.DataFrame({
+                "Crop":
+                    crop,
 
-                "Crop": [
-                    crop
-                ],
+                "Area":
+                    area_hectare,
 
-                "Area": [
-                    area_hectare
-                ],
+                "Area_Cent":
+                    area_cent,
 
-                "Area_Cent": [
-                    area_cent
-                ],
+                "Soil_Type":
+                    soil_type,
 
-                "Soil_Type": [
-                    soil_type
-                ],
+                "Soil_pH":
+                    soil_ph_value,
 
-                "Soil_pH": [
-                    soil_ph
-                ],
+                "Nitrogen_N_kg_ha":
+                    nitrogen_value,
 
-                "Nitrogen_N_kg_ha": [
-                    nitrogen
-                ],
+                "Phosphorus_P_kg_ha":
+                    phosphorus_value,
 
-                "Phosphorus_P_kg_ha": [
-                    phosphorus
-                ],
+                "Potassium_K_kg_ha":
+                    potassium_value,
 
-                "Potassium_K_kg_ha": [
-                    potassium
-                ],
+                "Rainfall_mm":
+                    rainfall_value,
 
-                "Rainfall_mm": [
-                    rainfall
-                ],
+                "Temperature_C":
+                    temperature_value,
 
-                "Temperature_C": [
-                    temperature
-                ],
+                "Humidity_percent":
+                    humidity_value,
 
-                "Humidity_percent": [
-                    humidity
-                ],
+                "Irrigation_Level":
+                    irrigation,
 
-                "Irrigation_Level": [
-                    irrigation
-                ],
+                "Season":
+                    season,
 
-                "Season": [
-                    season
-                ]
-
-            })
+            }])
 
 
-            # ==================================================
-            # YIELD PREDICTION
-            # ==================================================
+            # =================================================
+            # PREDICT SELECTED CROP
+            # =================================================
 
             yield_per_hectare = float(
-
                 yield_model.predict(
                     yield_input
                 )[0]
-
             )
 
 
-            # ==================================================
-            # TOTAL YIELD
-            # ==================================================
+            yield_per_hectare = max(
+                yield_per_hectare,
+                0
+            )
 
-            predicted_yield_total = (
 
+            # =================================================
+            # TOTAL PRODUCTION
+            # =================================================
+
+            total_production = (
                 yield_per_hectare
-                *
-                area_hectare
-
+                * area_hectare
             )
 
 
             predicted_yield = round(
-                predicted_yield_total,
+                total_production,
                 2
-            
             )
+
             predicted_tonnes = round(
-                predicted_yield / 1000,
+                total_production / 1000,
                 2
             )
-            
 
-            # ==================================================
-            # ==================================================
+
+            # =================================================
             # CROP RECOMMENDATION
-            # ==================================================
-            # ==================================================
+            # =================================================
 
-            if crop_model is None:
+            if crop_model is not None:
 
-                raise ValueError(
-                    "Crop recommendation model could not be loaded."
+                recommendation_input = pd.DataFrame([{
+
+                    "Soil_Type":
+                        soil_type,
+
+                    "Soil_pH":
+                        soil_ph_value,
+
+                    "Nitrogen_N_kg_ha":
+                        nitrogen_value,
+
+                    "Phosphorus_P_kg_ha":
+                        phosphorus_value,
+
+                    "Potassium_K_kg_ha":
+                        potassium_value,
+
+                    "Rainfall_mm":
+                        rainfall_value,
+
+                    "Temperature_C":
+                        temperature_value,
+
+                    "Humidity_percent":
+                        humidity_value,
+
+                    "Irrigation_Level":
+                        irrigation,
+
+                    "Season":
+                        season,
+
+                }])
+
+
+                # =================================================
+                # ENCODE CATEGORICAL VALUES
+                # =================================================
+
+                for column, encoder in (
+                    crop_feature_encoders.items()
+                ):
+
+                    if column in recommendation_input.columns:
+
+                        recommendation_input[column] = (
+                            encoder.transform(
+                                recommendation_input[column]
+                            )
+                        )
+
+
+                # =================================================
+                # FEATURE ORDER
+                # =================================================
+
+                recommendation_input = (
+                    recommendation_input[
+                        crop_features
+                    ]
                 )
 
 
-            # ==================================================
-            # RECOMMENDATION INPUT
-            #
-            # IMPORTANT:
-            # DO NOT INCLUDE Crop
-            # DO NOT INCLUDE Area
-            # DO NOT INCLUDE Area_Cent
-            # ==================================================
+                # =================================================
+                # GET PROBABILITIES
+                # =================================================
 
-            crop_input = pd.DataFrame({
-
-                "Soil_Type": [
-                    soil_type
-                ],
-
-                "Soil_pH": [
-                    soil_ph
-                ],
-
-                "Nitrogen_N_kg_ha": [
-                    nitrogen
-                ],
-
-                "Phosphorus_P_kg_ha": [
-                    phosphorus
-                ],
-
-                "Potassium_K_kg_ha": [
-                    potassium
-                ],
-
-                "Rainfall_mm": [
-                    rainfall
-                ],
-
-                "Temperature_C": [
-                    temperature
-                ],
-
-                "Humidity_percent": [
-                    humidity
-                ],
-
-                "Irrigation_Level": [
-                    irrigation
-                ],
-
-                "Season": [
-                    season
-                ]
-
-            })
-
-
-            # ==================================================
-            # APPLY SAVED ENCODERS
-            # ==================================================
-
-            for col in [
-
-                "Soil_Type",
-                "Irrigation_Level",
-                "Season"
-
-            ]:
-
-                encoder = (
-                    crop_feature_encoders[col]
-                )
-
-                value = str(
-                    crop_input[col].iloc[0]
+                probabilities = (
+                    crop_model.predict_proba(
+                        recommendation_input
+                    )[0]
                 )
 
 
-                if value not in encoder.classes_:
+                # =================================================
+                # TOP 3 CROPS
+                # =================================================
 
-                    raise ValueError(
+                top_indices = (
+                    probabilities
+                    .argsort()[::-1][:3]
+                )
 
-                        f"Invalid {col}: '{value}'. "
-                        f"Available values: "
-                        f"{list(encoder.classes_)}"
 
+                top_class_codes = (
+                    crop_model.classes_[
+                        top_indices
+                    ]
+                )
+
+
+                top_crops = (
+                    crop_target_encoder.inverse_transform(
+                        top_class_codes
+                    )
+                )
+
+
+                # =================================================
+                # PRODUCTION FOR EACH RECOMMENDED CROP
+                # =================================================
+
+                for rank, recommended_crop in enumerate(
+                    top_crops,
+                    start=1
+                ):
+
+                    recommended_input = pd.DataFrame([{
+
+                        "Crop":
+                            recommended_crop,
+
+                        "Area":
+                            area_hectare,
+
+                        "Area_Cent":
+                            area_cent,
+
+                        "Soil_Type":
+                            soil_type,
+
+                        "Soil_pH":
+                            soil_ph_value,
+
+                        "Nitrogen_N_kg_ha":
+                            nitrogen_value,
+
+                        "Phosphorus_P_kg_ha":
+                            phosphorus_value,
+
+                        "Potassium_K_kg_ha":
+                            potassium_value,
+
+                        "Rainfall_mm":
+                            rainfall_value,
+
+                        "Temperature_C":
+                            temperature_value,
+
+                        "Humidity_percent":
+                            humidity_value,
+
+                        # USER'S SELECTION
+                        "Irrigation_Level":
+                            irrigation,
+
+                        # USER'S SELECTION
+                        "Season":
+                            season,
+
+                    }])
+
+
+                    recommended_yield = float(
+                        yield_model.predict(
+                            recommended_input
+                        )[0]
                     )
 
 
-                crop_input[col] = (
-
-                    encoder.transform(
-                        crop_input[col].astype(str)
+                    recommended_yield = max(
+                        recommended_yield,
+                        0
                     )
 
-                )
+
+                    recommended_production = (
+                        recommended_yield
+                        * area_hectare
+                    )
 
 
-            # ==================================================
-            # EXACT TRAINING FEATURES
-            # ==================================================
+                    top_recommendations.append({
 
-            prediction_input = (
-                crop_input[crop_features]
-            )
+                        "rank":
+                            rank,
 
+                        "crop":
+                            recommended_crop,
 
-            # ==================================================
-            # PREDICT RECOMMENDED CROP
-            # ==================================================
+                        "production":
+                            round(
+                                recommended_production,
+                                2
+                            ),
 
-            recommendation_result = (
+                        "tonnes":
+                            round(
+                                recommended_production / 1000,
+                                2
+                            ),
 
-                crop_model.predict(
-                    prediction_input
-                )
-
-            )
-
-
-            # ==================================================
-            # CONVERT LABEL TO CROP NAME
-            # ==================================================
-
-            recommended_crop = str(
-
-                crop_target_encoder.inverse_transform(
-                    recommendation_result
-                )[0]
-
-            )
+                    })
 
 
-            # ==================================================
-            # CHECK SUITABILITY
-            # ==================================================
+                # =================================================
+                # SUITABILITY
+                # =================================================
 
-            crop_suitable = (
+                if top_recommendations:
 
-                crop.lower().strip()
-                ==
-                recommended_crop.lower().strip()
+                    best_crop = (
+                        top_recommendations[0]["crop"]
+                    )
 
-            )
+                    crop_suitable = (
+                        crop.lower()
+                        ==
+                        best_crop.lower()
+                    )
 
 
-            # ==================================================
-            # DEBUG INFORMATION
-            # ==================================================
+        except ValueError as e:
 
-            print("\n")
-            print("=" * 60)
-            print("CROP RECOMMENDATION")
-            print("=" * 60)
+            error = str(e)
 
-            print(
-                "Selected crop      :",
-                crop
-            )
+            predicted_yield = None
 
-            print(
-                "Soil type           :",
-                soil_type
-            )
+            predicted_tonnes = None
 
-            print(
-                "Soil pH             :",
-                soil_ph
-            )
+            top_recommendations = []
 
-            print(
-                "Nitrogen            :",
-                nitrogen
-            )
-
-            print(
-                "Phosphorus          :",
-                phosphorus
-            )
-
-            print(
-                "Potassium           :",
-                potassium
-            )
-
-            print(
-                "Rainfall            :",
-                rainfall
-            )
-
-            print(
-                "Temperature         :",
-                temperature
-            )
-
-            print(
-                "Humidity            :",
-                humidity
-            )
-
-            print(
-                "Irrigation          :",
-                irrigation
-            )
-
-            print(
-                "Season              :",
-                season
-            )
-
-            print(
-                "Recommended crop    :",
-                recommended_crop
-            )
-
-            print(
-                "Crop suitable       :",
-                crop_suitable
-            )
-
-            print("=" * 60)
+            crop_suitable = None
 
 
         except Exception as e:
 
-            error = str(e)
-
-            print(
-                "Prediction error:",
-                error
+            error = (
+                "Prediction error: "
+                + str(e)
             )
 
+            predicted_yield = None
+
+            predicted_tonnes = None
+
+            top_recommendations = []
+
+            crop_suitable = None
+
 
     # ============================================================
-    # RETURN PAGE
+    # CONTEXT
     # ============================================================
+
+    context = {
+
+        "predicted_yield":
+            predicted_yield,
+
+        "predicted_tonnes":
+            predicted_tonnes,
+
+        "top_recommendations":
+            top_recommendations,
+
+        "crop_suitable":
+            crop_suitable,
+
+        "area_value":
+            area_value,
+
+        "area_unit":
+            area_unit,
+
+        "crop":
+            crop,
+
+        "soil_type":
+            soil_type,
+
+        "soil_ph":
+            soil_ph,
+
+        "nitrogen":
+            nitrogen,
+
+        "phosphorus":
+            phosphorus,
+
+        "potassium":
+            potassium,
+
+        "rainfall":
+            rainfall,
+
+        "temperature":
+            temperature,
+
+        "humidity":
+            humidity,
+
+        "irrigation":
+            irrigation,
+
+        "season":
+            season,
+
+        "error":
+            error,
+    }
+
 
     return render(
-
         request,
-
         "yield_prediction.html",
-
-        {
-
-            "predicted_yield":
-                predicted_yield,
-
-            "predicted_tonnes":
-                predicted_tonnes,
-
-            "recommended_crop":
-                recommended_crop,
-
-            "crop_suitable":
-                crop_suitable,
-
-            "error":
-                error,
-
-            "area_value":
-                area_value,
-
-            "area_unit":
-                area_unit
-
-        }
-
+        context
     )
