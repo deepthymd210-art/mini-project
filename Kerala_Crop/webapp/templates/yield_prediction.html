@@ -1,6 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -797,7 +798,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -806,65 +806,64 @@
                  SUITABILITY
             ================================================== -->
 
-            {% if crop_suitable %}
+            <div id="cropSuitabilityResult">
 
-            <div class="suitable-result">
+                {% if crop_suitable %}
 
-                <div class="status-icon">
-                    ✓
+                <div class="suitable-result">
+
+                    <div class="status-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Crop is Suitable
+                        </h3>
+
+                        <p>
+                            The selected crop
+                            <strong>
+                                {{ request.POST.crop }}
+                            </strong>
+                            is recommended for these conditions.
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <div>
+                {% else %}
 
-                    <h3>
-                        Crop is Suitable
-                    </h3>
+                <div class="not-suitable-result">
 
-                    <p>
+                    <div class="status-icon">
+                        !
+                    </div>
 
-                        The selected crop
-                        <strong>
-                            {{ request.POST.crop }}
-                        </strong>
-                        is the top crop predicted for
-                        these conditions.
+                    <div>
 
-                    </p>
+                        <h3>
+                            Another Crop May Be Better
+                        </h3>
+
+                        <p>
+                            The selected crop
+                            <strong>
+                                {{ request.POST.crop }}
+                            </strong>
+                            is not among the top recommended
+                            crops for these conditions.
+                        </p>
+
+                    </div>
 
                 </div>
+
+                {% endif %}
 
             </div>
-
-            {% else %}
-
-            <div class="not-suitable-result">
-
-                <div class="status-icon">
-                    !
-                </div>
-
-                <div>
-
-                    <h3>
-                        Another Crop May Be Better
-                    </h3>
-
-                    <p>
-
-                        The selected crop
-                        <strong>
-                            {{ request.POST.crop }}
-                        </strong>
-                        is not the top crop predicted
-                        for these conditions.
-
-                    </p>
-
-                </div>
-
-            </div>
-
-            {% endif %}
 
 
 
@@ -917,7 +916,8 @@
 
                     {% for item in top_recommendations %}
 
-                    <div class="top-crop-card">
+                    <div class="top-crop-card"
+                         data-recommended-crop="{{ item.crop|lower|escape }}">
 
 
                         <div class="top-crop-rank">
@@ -970,14 +970,14 @@
                             <div class="top-crop-tonnes">
 
                                 ⚖️
+
                                 {{ item.tonnes|floatformat:2 }}
+
                                 tonnes
 
                             </div>
 
-
                         </div>
-
 
                     </div>
 
@@ -1020,7 +1020,113 @@
      JAVASCRIPT
 ====================================================== -->
 
-<script src="{% static 'js/script.js' %}">
+<script src="{% static 'js/script.js' %}"></script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /*
+     * Check whether the selected crop exists
+     * anywhere in the Top 3 recommendations.
+     */
+
+    const selectedCropElement =
+        document.querySelector('select[name="crop"]');
+
+    const suitabilityBox =
+        document.getElementById("cropSuitabilityResult");
+
+    const recommendationCards =
+        document.querySelectorAll(".top-crop-card");
+
+
+    if (
+        !selectedCropElement ||
+        !suitabilityBox ||
+        recommendationCards.length === 0
+    ) {
+        return;
+    }
+
+
+    const selectedCrop =
+        selectedCropElement.value
+            .trim()
+            .toLowerCase();
+
+
+    let cropFoundInRecommendations = false;
+
+
+    recommendationCards.forEach(function (card) {
+
+        const recommendedCrop =
+            card
+                .getAttribute("data-recommended-crop")
+                .trim()
+                .toLowerCase();
+
+
+        if (recommendedCrop === selectedCrop) {
+
+            cropFoundInRecommendations = true;
+
+        }
+
+    });
+
+
+    /*
+     * If the selected crop is present in Top 3,
+     * display Suitable.
+     */
+
+    if (cropFoundInRecommendations) {
+
+        suitabilityBox.innerHTML = `
+
+            <div class="suitable-result">
+
+                <div class="status-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <h3>
+                        Crop is Suitable
+                    </h3>
+
+                    <p>
+                        The selected crop
+                        <strong>${selectedCropElement.value}</strong>
+                        is recommended for these conditions.
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+});
+
+
+/*
+ * Reset prediction page.
+ */
+
+function resetPrediction() {
+
+    window.location.href =
+        "{% url 'yield_prediction' %}";
+
+}
+
 </script>
 
 
