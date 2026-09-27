@@ -1,20 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("predictionForm");
-    const button = document.getElementById("predictButton");
-
     /* =====================================================
-       PREDICT BUTTON
+       MAIN YIELD PREDICTION
     ===================================================== */
 
-    if (form) {
+    const predictionForm =
+        document.getElementById("predictionForm");
 
-        form.addEventListener("submit", function () {
+    const predictionButton =
+        document.getElementById("predictButton");
 
-            if (button) {
+    if (predictionForm) {
 
-                button.innerHTML = "⏳ Analyzing...";
-                button.disabled = true;
+        predictionForm.addEventListener("submit", function () {
+
+            if (predictionButton) {
+
+                predictionButton.innerHTML =
+                    "⏳ Analyzing...";
+
+                predictionButton.disabled = true;
 
             }
 
@@ -24,16 +29,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       SCROLL TO RESULT
+       SCROLL TO YIELD PREDICTION RESULT
     ===================================================== */
 
-    const result = document.getElementById("predictionResult");
+    const predictionResult =
+        document.getElementById("predictionResult");
 
-    if (result) {
+    if (predictionResult) {
 
         setTimeout(function () {
 
-            result.scrollIntoView({
+            predictionResult.scrollIntoView({
                 behavior: "smooth",
                 block: "center"
             });
@@ -42,655 +48,686 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-});
+
+   
 
 
-/* =====================================================
-   TRY ANOTHER PREDICTION
-===================================================== */
+    /* =====================================================
+       TOOL 1
+       PRODUCTION & LAND CALCULATOR
+    ===================================================== */
 
-function resetPrediction() {
-
-    /*
-       Go to a fresh GET request.
-
-       This removes the previous POST data
-       and loads a completely new prediction page.
-    */
-
-    window.location.href = window.location.pathname;
-
-}
-
-// ============================================================
-// CSRF TOKEN
-// ============================================================
-
-function getCookie(name) {
-    let cookieValue = null;
-
-    if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-
-        for (let cookie of cookies) {
-            cookie = cookie.trim();
-
-            if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                cookieValue = decodeURIComponent(
-                    cookie.substring(name.length + 1)
-                );
-                break;
-            }
-        }
-    }
-
-    return cookieValue;
-}
-
-
-function calculateLand() {
-
-    const cropElement = document.getElementById("calcCrop");
-    const landElement = document.getElementById("availableLand");
-    const landUnitElement = document.getElementById("landUnit");
-    const productionElement = document.getElementById("desiredProduction");
-    const productionUnitElement = document.getElementById("productionUnit");
-    const resultBox = document.getElementById("landResult");
-
-    // Get values
-    const crop = cropElement.value.trim();
-    const availableLand = landElement.value.trim();
-    const landUnit = landUnitElement.value;
-    const desiredProduction = productionElement.value.trim();
-    const productionUnit = productionUnitElement.value;
-
-    console.log("Crop selected:", crop);
-    console.log("Available land:", availableLand);
-    console.log("Land unit:", landUnit);
-    console.log("Desired production:", desiredProduction);
-    console.log("Production unit:", productionUnit);
-
-    // Validation
-    if (crop === "") {
-        resultBox.innerHTML =
-            "<p class='error'>⚠️ Please select a crop.</p>";
-        return;
-    }
-
-    if (availableLand === "" || parseFloat(availableLand) <= 0) {
-        resultBox.innerHTML =
-            "<p class='error'>⚠️ Please enter available land.</p>";
-        return;
-    }
-
-    if (desiredProduction === "" || parseFloat(desiredProduction) <= 0) {
-        resultBox.innerHTML =
-            "<p class='error'>⚠️ Please enter desired production.</p>";
-        return;
-    }
-
-    resultBox.innerHTML =
-        "<p>⏳ Calculating using AI model...</p>";
-
-    const calculateUrl = resultBox.dataset.url;
-
-    // CSRF token
-    let csrfToken = "";
-
-    const csrfInput =
-        document.querySelector("[name=csrfmiddlewaretoken]");
-
-    if (csrfInput) {
-        csrfToken = csrfInput.value;
-    }
-
-    fetch(calculateUrl, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken
-        },
-
-        body: JSON.stringify({
-
-            crop: crop,
-
-            available_land:
-                parseFloat(availableLand),
-
-            land_unit: landUnit,
-
-            desired_production:
-                parseFloat(desiredProduction),
-
-            production_unit: productionUnit
-        })
-    })
-
-    .then(response => {
-
-        if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(
-                    "Server returned " +
-                    response.status +
-                    ": " +
-                    text.substring(0, 200)
-                );
-            });
-        }
-
-        return response.json();
-    })
-
-    .then(data => {
-
-        console.log("Server response:", data);
-
-        if (!data.success) {
-            throw new Error(
-                data.error || "Prediction failed"
-            );
-        }
-
-        resultBox.innerHTML = `
-
-            <div class="result-card">
-
-                <h3>🌱 Crop: ${data.crop}</h3>
-
-                <p>
-                    📐 <strong>Available Land:</strong>
-                    ${data.available_land}
-                    ${data.land_unit}
-                </p>
-
-                <p>
-                    🎯 <strong>Desired Production:</strong>
-                    ${data.desired_production}
-                    ${data.production_unit}
-                </p>
-
-                <hr>
-
-                <p>
-                    🤖 <strong>AI Predicted Yield:</strong>
-                    ${Number(data.predicted_yield).toFixed(2)}
-                    kg/ha
-                </p>
-
-                <p>
-                    🌾 <strong>Required Land:</strong>
-                    ${Number(data.required_hectare).toFixed(4)}
-                    hectare
-                </p>
-
-                <p>
-                    📏 <strong>Required Land:</strong>
-                    ${Number(data.required_cent).toFixed(2)}
-                    cent
-                </p>
-
-                <p>
-                    📏 <strong>Required Land:</strong>
-                    ${Number(data.required_acre).toFixed(4)}
-                    acre
-                </p>
-
-                <hr>
-
-                <p>
-                    📦 <strong>Production from Available Land:</strong>
-                    ${Number(data.available_production_kg).toFixed(2)}
-                    kg
-                </p>
-
-                <p>
-                    ⚖️ <strong>Approximately:</strong>
-                    ${Number(data.available_production_tonnes).toFixed(2)}
-                    tonnes
-                </p>
-
-                <div class="${data.is_sufficient
-                    ? "success-box"
-                    : "warning-box"}">
-
-                    ${data.message}
-
-                </div>
-
-            </div>
-        `;
-    })
-
-    .catch(error => {
-
-        console.error("Prediction error:", error);
-
-        resultBox.innerHTML = `
-            <div class="error">
-                ❌ Prediction error: ${error.message}
-            </div>
-        `;
-    });
-}
-// ============================================================
-// TOOL 2
-// CROP REQUIREMENT GUIDE
-// ============================================================
-
-function showCropRequirements() {
-
-    const crop =
+    const landForm =
         document.getElementById(
-            "requirementCrop"
-        ).value;
-
-    const soilType =
-        document.getElementById(
-            "requirementSoil"
-        ).value;
-
-    const result =
-        document.getElementById(
-            "cropRequirements"
+            "landCalculatorForm"
         );
 
 
-    // --------------------------------------------------------
-    // NOTHING SELECTED
-    // --------------------------------------------------------
+    if (landForm) {
 
-    if (!crop || !soilType) {
+        landForm.addEventListener(
+            "submit",
+            function (event) {
 
-        result.innerHTML = `
+                const cropElement =
+                    document.getElementById(
+                        "calcCrop"
+                    );
 
-            <div class="requirement-placeholder">
+                const landElement =
+                    document.getElementById(
+                        "availableLand"
+                    );
 
-                <span>
-                    🌿
-                </span>
+                const productionElement =
+                    document.getElementById(
+                        "desiredProduction"
+                    );
 
-                <p>
-                    Select a crop and soil type to
-                    view recommended requirements.
-                </p>
 
-            </div>
+                const crop =
+                    cropElement
+                        ? cropElement.value
+                        : "";
 
-        `;
 
-        return;
+                const availableLand =
+                    landElement
+                        ? landElement.value
+                        : "";
+
+
+                const desiredProduction =
+                    productionElement
+                        ? productionElement.value
+                        : "";
+
+
+                if (!crop) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select a crop."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    availableLand === "" ||
+                    parseFloat(availableLand) <= 0
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please enter valid available land."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    desiredProduction === "" ||
+                    parseFloat(desiredProduction) <= 0
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please enter valid desired production."
+                    );
+
+                    return;
+
+                }
+
+
+                const button =
+                    landForm.querySelector(
+                        ".tool-button"
+                    );
+
+
+                if (button) {
+
+                    button.disabled = true;
+
+                    button.innerHTML =
+                        "⏳ Calculating...";
+
+                }
+
+            }
+        );
+
     }
 
 
-    // --------------------------------------------------------
-    // LOADING
-    // --------------------------------------------------------
+    /* =====================================================
+       TOOL 2
+       CROP REQUIREMENT GUIDE
+    ===================================================== */
 
-    result.innerHTML = `
-
-        <div class="result-loading">
-            ⏳ Analyzing crop and soil...
-        </div>
-
-    `;
+    const requirementForm =
+        document.getElementById(
+            "requirementForm"
+        );
 
 
-    // --------------------------------------------------------
-    // SEND DATA TO DJANGO
-    // --------------------------------------------------------
+    if (requirementForm) {
 
-    const formData = new FormData();
+        requirementForm.addEventListener(
+            "submit",
+            function (event) {
 
-    formData.append(
-        "crop",
-        crop
-    );
-
-    formData.append(
-        "soil_type",
-        soilType
-    );
+                const cropElement =
+                    document.getElementById(
+                        "requirementCrop"
+                    );
 
 
-    fetch(
-        "/crop-requirements/",
-        {
-
-            method: "POST",
-
-            headers: {
-
-                "X-CSRFToken":
-                    getCSRFToken()
-
-            },
-
-            body: formData
-
-        }
-    )
-
-    .then(response => response.json())
-
-    .then(data => {
-
-        if (!data.success) {
-
-            result.innerHTML = `
-
-                <div class="result-error">
-
-                    ⚠️ ${data.error}
-
-                </div>
-
-            `;
-
-            return;
-        }
+                const crop =
+                    cropElement
+                        ? cropElement.value
+                        : "";
 
 
-        // ----------------------------------------------------
-        // SOIL MATCH MESSAGE
-        // ----------------------------------------------------
+                if (!crop) {
 
-        let matchMessage = "";
+                    event.preventDefault();
 
-        if (data.exact_soil_match) {
+                    alert(
+                        "Please select a crop."
+                    );
 
-            matchMessage = `
+                    return;
 
-                <div class="result-success">
-
-                    ✅ Requirements based on
-                    ${data.crop} + ${data.soil_type}
-                    records.
-
-                </div>
-
-            `;
-
-        } else {
-
-            matchMessage = `
-
-                <div class="result-warning">
-
-                    ℹ️ Exact ${data.crop} +
-                    ${data.soil_type} data was limited.
-                    Values are estimated from available
-                    ${data.crop} records.
-
-                </div>
-
-            `;
-
-        }
+                }
 
 
-        // ----------------------------------------------------
-        // FORMAT VALUE
-        // ----------------------------------------------------
+                const button =
+                    requirementForm.querySelector(
+                        ".tool-button"
+                    );
 
-        function value(value, unit = "") {
 
-            if (
-                value === null ||
-                value === undefined
-            ) {
+                if (button) {
 
-                return "Not available";
+                    button.disabled = true;
+
+                    button.innerHTML =
+                        "⏳ Loading...";
+
+                }
 
             }
+        );
 
-            return `${value} ${unit}`;
+    }
+});
 
-        }
 
 
-        // ----------------------------------------------------
-        // DISPLAY
-        // ----------------------------------------------------
 
-        result.innerHTML = `
 
-            <div class="requirements-content">
 
-                <h4>
-                    🌱 ${data.crop}
-                </h4>
+//     /* =====================================================
+//        weather API integration
+//     ===================================================== */
 
-                <p class="soil-selected">
+// document.addEventListener("DOMContentLoaded", function () {
 
-                    Soil:
-                    <strong>
-                        ${data.soil_type}
-                    </strong>
+//     /* =====================================================
+//        GET HTML ELEMENTS
+//     ===================================================== */
 
-                </p>
+//     const weatherButton =
+//         document.getElementById("getWeatherButton");
 
+//     const weatherStatus =
+//         document.getElementById("weatherStatus");
 
-                ${matchMessage}
+//     const rainfallInput =
+//         document.getElementById("rainfall");
 
+//     const temperatureInput =
+//         document.getElementById("temperature");
 
-                <div class="requirement-grid">
+//     const humidityInput =
+//         document.getElementById("humidity");
 
 
-                    <div class="requirement-box">
+//     /* =====================================================
+//        CHECK REQUIRED ELEMENTS
+//     ===================================================== */
 
-                        <span>
-                            🧪
-                        </span>
+//     if (!weatherButton) {
+//         console.error("getWeatherButton not found.");
+//         return;
+//     }
 
-                        <small>
-                            Nitrogen (N)
-                        </small>
+//     if (!weatherStatus) {
+//         console.error("weatherStatus not found.");
+//         return;
+//     }
 
-                        <strong>
-                            ${value(
-                                data.nitrogen,
-                                "kg/ha"
-                            )}
-                        </strong>
+//     if (!rainfallInput) {
+//         console.error("rainfall input not found.");
+//         return;
+//     }
 
-                    </div>
+//     if (!temperatureInput) {
+//         console.error("temperature input not found.");
+//         return;
+//     }
 
+//     if (!humidityInput) {
+//         console.error("humidity input not found.");
+//         return;
+//     }
 
-                    <div class="requirement-box">
 
-                        <span>
-                            🧪
-                        </span>
+//     /* =====================================================
+//        WEATHER BUTTON
+//     ===================================================== */
 
-                        <small>
-                            Phosphorus (P)
-                        </small>
+//     weatherButton.addEventListener("click", function () {
 
-                        <strong>
-                            ${value(
-                                data.phosphorus,
-                                "kg/ha"
-                            )}
-                        </strong>
 
-                    </div>
+//         /* =================================================
+//            CHECK GEOLOCATION SUPPORT
+//         ================================================= */
 
+//         if (!navigator.geolocation) {
 
-                    <div class="requirement-box">
+//             weatherStatus.textContent =
+//                 "❌ Geolocation is not supported by your browser.";
 
-                        <span>
-                            🧪
-                        </span>
+//             return;
+//         }
 
-                        <small>
-                            Potassium (K)
-                        </small>
 
-                        <strong>
-                            ${value(
-                                data.potassium,
-                                "kg/ha"
-                            )}
-                        </strong>
+//         /* =================================================
+//            BUTTON LOADING
+//         ================================================= */
 
-                    </div>
+//         weatherButton.disabled = true;
 
+//         weatherButton.textContent =
+//             "⏳ Getting Location...";
 
-                    <div class="requirement-box">
+//         weatherStatus.textContent =
+//             "Please allow location access in your browser.";
 
-                        <span>
-                            ⚗️
-                        </span>
 
-                        <small>
-                            Soil pH
-                        </small>
+//         /* =================================================
+//            GET CURRENT LOCATION
+//         ================================================= */
 
-                        <strong>
-                            ${value(
-                                data.soil_ph
-                            )}
-                        </strong>
+//         navigator.geolocation.getCurrentPosition(
 
-                    </div>
+//             /* =================================================
+//                LOCATION SUCCESS
+//             ================================================= */
 
+//             function (position) {
 
-                    <div class="requirement-box">
+//                 const latitude =
+//                     position.coords.latitude;
 
-                        <span>
-                            🌧️
-                        </span>
+//                 const longitude =
+//                     position.coords.longitude;
 
-                        <small>
-                            Rainfall
-                        </small>
 
-                        <strong>
-                            ${value(
-                                data.rainfall,
-                                "mm"
-                            )}
-                        </strong>
+//                 console.log(
+//                     "Latitude:",
+//                     latitude
+//                 );
 
-                    </div>
+//                 console.log(
+//                     "Longitude:",
+//                     longitude
+//                 );
 
 
-                    <div class="requirement-box">
+//                 /* =================================================
+//                    UPDATE STATUS
+//                 ================================================= */
 
-                        <span>
-                            🌡️
-                        </span>
+//                 weatherButton.textContent =
+//                     "⏳ Getting Weather...";
 
-                        <small>
-                            Temperature
-                        </small>
+//                 weatherStatus.textContent =
+//                     "Fetching current weather conditions...";
 
-                        <strong>
-                            ${value(
-                                data.temperature,
-                                "°C"
-                            )}
-                        </strong>
 
-                    </div>
+//                 /* =================================================
+//                    CREATE DJANGO WEATHER URL
+//                 ================================================= */
 
+//                 const weatherURL =
+//                     "{% url 'get_weather' %}" +
+//                     "?lat=" +
+//                     encodeURIComponent(latitude) +
+//                     "&lon=" +
+//                     encodeURIComponent(longitude);
 
-                    <div class="requirement-box">
 
-                        <span>
-                            💧
-                        </span>
+//                 console.log(
+//                     "Weather URL:",
+//                     weatherURL
+//                 );
 
-                        <small>
-                            Humidity
-                        </small>
 
-                        <strong>
-                            ${value(
-                                data.humidity,
-                                "%"
-                            )}
-                        </strong>
+//                 /* =================================================
+//                    SEND REQUEST TO DJANGO
+//                 ================================================= */
 
-                    </div>
+//                 fetch(weatherURL)
 
+//                     /* =================================================
+//                        READ DJANGO RESPONSE
+//                     ================================================= */
 
-                    <div class="requirement-box">
+//                     .then(function (response) {
 
-                        <span>
-                            🚿
-                        </span>
+//                         console.log(
+//                             "Django status:",
+//                             response.status
+//                         );
 
-                        <small>
-                            Irrigation
-                        </small>
 
-                        <strong>
-                            ${value(
-                                data.irrigation
-                            )}
-                        </strong>
+//                         /*
+//                          * Read response as TEXT first.
+//                          *
+//                          * This prevents:
+//                          *
+//                          * Unexpected token '<'
+//                          *
+//                          * because Django may return HTML
+//                          * for a 404 or server error.
+//                          */
 
-                    </div>
+//                         return response.text().then(
+//                             function (text) {
 
+//                                 console.log(
+//                                     "Django response:",
+//                                     text
+//                                 );
 
-                    <div class="requirement-box">
 
-                        <span>
-                            🌤️
-                        </span>
+//                                 /* =====================================
+//                                    HTTP ERROR
+//                                 ===================================== */
 
-                        <small>
-                            Season
-                        </small>
+//                                 if (!response.ok) {
 
-                        <strong>
-                            ${value(
-                                data.season
-                            )}
-                        </strong>
+//                                     throw new Error(
+//                                         "Django error " +
+//                                         response.status +
+//                                         ": " +
+//                                         text.substring(0, 200)
+//                                     );
 
-                    </div>
+//                                 }
 
 
-                </div>
+//                                 /* =====================================
+//                                    CONVERT TEXT TO JSON
+//                                 ===================================== */
 
+//                                 try {
 
-                <p class="sample-info">
+//                                     return JSON.parse(text);
 
-                    Based on
-                    <strong>
-                        ${data.sample_count}
-                    </strong>
-                    matching dataset records.
+//                                 }
 
-                </p>
+//                                 catch (error) {
 
-            </div>
+//                                     console.error(
+//                                         "Invalid JSON response:",
+//                                         text
+//                                     );
 
-        `;
 
-    })
+//                                     throw new Error(
+//                                         "Django returned HTML instead of JSON. " +
+//                                         "Check the get_weather URL and view."
+//                                     );
 
-    .catch(error => {
+//                                 }
 
-        console.error(error);
+//                             }
+//                         );
 
-        result.innerHTML = `
+//                     })
 
-            <div class="result-error">
 
-                ⚠️ Unable to retrieve crop
-                requirements.
+//                     /* =================================================
+//                        PROCESS WEATHER JSON
+//                     ================================================= */
 
-            </div>
+//                     .then(function (data) {
 
-        `;
+//                         console.log(
+//                             "Weather JSON:",
+//                             data
+//                         );
 
-    });
 
-}
+//                         /* =============================================
+//                            CHECK SUCCESS
+//                         ============================================= */
+
+//                         if (!data.success) {
+
+//                             throw new Error(
+//                                 data.error ||
+//                                 "Unable to get weather data."
+//                             );
+
+//                         }
+
+
+//                         /* =============================================
+//                            GET VALUES
+//                         ============================================= */
+
+//                         const temperature =
+//                             data.temperature;
+
+//                         const humidity =
+//                             data.humidity;
+
+//                         const rainfall =
+//                             data.rainfall;
+
+
+//                         /* =============================================
+//                            CHECK TEMPERATURE
+//                         ============================================= */
+
+//                         if (
+//                             temperature === null ||
+//                             temperature === undefined
+//                         ) {
+
+//                             throw new Error(
+//                                 "Temperature data is unavailable."
+//                             );
+
+//                         }
+
+
+//                         /* =============================================
+//                            CHECK HUMIDITY
+//                         ============================================= */
+
+//                         if (
+//                             humidity === null ||
+//                             humidity === undefined
+//                         ) {
+
+//                             throw new Error(
+//                                 "Humidity data is unavailable."
+//                             );
+
+//                         }
+
+
+//                         /* =============================================
+//                            CHECK RAINFALL
+//                         ============================================= */
+
+//                         if (
+//                             rainfall === null ||
+//                             rainfall === undefined
+//                         ) {
+
+//                             throw new Error(
+//                                 "Rainfall data is unavailable."
+//                             );
+
+//                         }
+
+
+//                         /* =============================================
+//                            FILL FORM INPUTS
+//                         ============================================= */
+
+//                         temperatureInput.value =
+//                             temperature;
+
+//                         humidityInput.value =
+//                             humidity;
+
+//                         rainfallInput.value =
+//                             rainfall;
+
+
+//                         /* =============================================
+//                            SUCCESS MESSAGE
+//                         ============================================= */
+
+//                         weatherStatus.innerHTML =
+//                             "✅ Weather updated successfully." +
+//                             "<br>" +
+//                             "🌡️ " +
+//                             temperature +
+//                             " °C &nbsp; | &nbsp;" +
+//                             "💧 " +
+//                             humidity +
+//                             " % &nbsp; | &nbsp;" +
+//                             "🌧️ " +
+//                             rainfall +
+//                             " mm";
+
+
+//                         /* =============================================
+//                            RESET BUTTON
+//                         ============================================= */
+
+//                         weatherButton.textContent =
+//                             "📍 Update Weather";
+
+//                         weatherButton.disabled =
+//                             false;
+
+//                     })
+
+
+//                     /* =================================================
+//                        WEATHER / DJANGO ERROR
+//                     ================================================= */
+
+//                     .catch(function (error) {
+
+//                         console.error(
+//                             "Weather error:",
+//                             error
+//                         );
+
+
+//                         weatherStatus.textContent =
+//                             "❌ " +
+//                             (
+//                                 error.message ||
+//                                 "Unable to get weather."
+//                             );
+
+
+//                         weatherButton.textContent =
+//                             "📍 Try Again";
+
+//                         weatherButton.disabled =
+//                             false;
+
+//                     });
+
+//             },
+
+
+//             /* =================================================
+//                LOCATION ERROR
+//             ================================================= */
+
+//             function (error) {
+
+//                 console.error(
+//                     "Location error:",
+//                     error
+//                 );
+
+
+//                 let message =
+//                     "❌ Unable to get your location.";
+
+
+//                 /* =============================================
+//                    PERMISSION DENIED
+//                 ============================================= */
+
+//                 if (
+//                     error.code ===
+//                     error.PERMISSION_DENIED
+//                 ) {
+
+//                     message =
+//                         "❌ Location permission was denied. " +
+//                         "Please allow location access and try again.";
+
+//                 }
+
+
+//                 /* =============================================
+//                    LOCATION UNAVAILABLE
+//                 ============================================= */
+
+//                 else if (
+//                     error.code ===
+//                     error.POSITION_UNAVAILABLE
+//                 ) {
+
+//                     message =
+//                         "❌ Your location is currently unavailable.";
+
+//                 }
+
+
+//                 /* =============================================
+//                    TIMEOUT
+//                 ============================================= */
+
+//                 else if (
+//                     error.code ===
+//                     error.TIMEOUT
+//                 ) {
+
+//                     message =
+//                         "❌ Location request timed out. " +
+//                         "Please try again.";
+
+//                 }
+
+
+//                 /* =============================================
+//                    SHOW LOCATION ERROR
+//                 ============================================= */
+
+//                 weatherStatus.textContent =
+//                     message;
+
+
+//                 weatherButton.textContent =
+//                     "📍 Try Again";
+
+//                 weatherButton.disabled =
+//                     false;
+
+//             },
+
+
+//             /* =================================================
+//                GEOLOCATION OPTIONS
+//             ================================================= */
+
+//             {
+//                 enableHighAccuracy: true,
+
+//                 timeout: 15000,
+
+//                 maximumAge: 300000
+//             }
+
+//         );
+
+//     });
+
+// });

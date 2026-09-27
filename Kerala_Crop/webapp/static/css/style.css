@@ -1,3 +1,7 @@
+/* =====================================================
+   GLOBAL
+===================================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -58,11 +62,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 70px 10%;
-    background: linear-gradient(
-        135deg,
-        #edf8ed,
-        #ffffff
-    );
+    background: linear-gradient(135deg, #edf8ed, #ffffff);
 }
 
 .hero-content {
@@ -155,8 +155,7 @@ body {
 
 .feature-grid {
     display: grid;
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 25px;
 }
 
@@ -169,8 +168,7 @@ body {
 
 .feature-card:hover {
     transform: translateY(-6px);
-    box-shadow:
-        0 15px 30px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
 }
 
 .feature-icon {
@@ -221,8 +219,7 @@ body {
     background: white;
     padding: 40px;
     border-radius: 25px;
-    box-shadow:
-        0 15px 45px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
 }
 
 
@@ -259,13 +256,12 @@ body {
 
 
 /* =====================================================
-   FORM
+   GENERAL FORM
 ===================================================== */
 
 .form-grid {
     display: grid;
-    grid-template-columns:
-        repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
 
@@ -296,8 +292,7 @@ body {
 .form-group input:focus,
 .form-group select:focus {
     border-color: #2b9348;
-    box-shadow:
-        0 0 0 3px rgba(43, 147, 72, 0.1);
+    box-shadow: 0 0 0 3px rgba(43, 147, 72, 0.1);
 }
 
 
@@ -326,7 +321,7 @@ body {
 
 
 /* =====================================================
-   RESULT
+   PREDICTION RESULT
 ===================================================== */
 
 .result-container {
@@ -338,30 +333,12 @@ body {
     border-radius: 25px;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.10);
     border: 1px solid #dcefe1;
-    box-sizing: border-box;
 }
 
 
-/* =========================================================
+/* =====================================================
    RESULT HEADER
-========================================================= */
-
-.result-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 30px auto;
-    padding: 35px;
-    background: #ffffff;
-    border-radius: 25px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.10);
-    border: 1px solid #dcefe1;
-    box-sizing: border-box;
-}
-
-
-/* =========================================================
-   RESULT HEADER
-========================================================= */
+===================================================== */
 
 .result-heading {
     display: flex;
@@ -394,10 +371,9 @@ body {
 }
 
 
-/* =========================================================
-   ALL RESULT INFORMATION
-   NO SEPARATE BOXES
-========================================================= */
+/* =====================================================
+   RESULT INFORMATION
+===================================================== */
 
 .result-info {
     display: grid;
@@ -407,9 +383,6 @@ body {
     border-radius: 20px;
     overflow: hidden;
 }
-
-
-/* Individual item - NOT a box */
 
 .result-item {
     display: flex;
@@ -421,9 +394,6 @@ body {
     box-shadow: none;
 }
 
-
-/* Vertical divider */
-
 .result-item:nth-child(1),
 .result-item:nth-child(2) {
     border-bottom: 1px solid #d9eadc;
@@ -434,20 +404,17 @@ body {
     border-right: 1px solid #d9eadc;
 }
 
-
 .result-emoji {
     font-size: 38px;
     width: 55px;
     text-align: center;
 }
 
-
 .result-item > div {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-
 
 .result-title {
     color: #64806b;
@@ -456,16 +423,15 @@ body {
     letter-spacing: 1px;
 }
 
-
 .result-item strong {
     color: #16351f;
     font-size: 22px;
 }
 
 
-/* =========================================================
+/* =====================================================
    SUITABILITY
-========================================================= */
+===================================================== */
 
 .suitable-result,
 .not-suitable-result {
@@ -510,25 +476,24 @@ body {
 }
 
 
-/* =========================================================
-   TRY AGAIN
-========================================================= */
+/* =====================================================
+   TRY AGAIN BUTTON
+===================================================== */
 
 .again-button {
-    display: block;
-    margin: 25px auto 0;
-    padding: 13px 28px;
-    border: none;
-    border-radius: 12px;
-    background: #2f7d46;
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+    border: 1px solid #2b9348;
+    background: white;
+    color: #237a3b;
+    border-radius: 10px;
+    font-weight: bold;
     cursor: pointer;
 }
 
 .again-button:hover {
-    opacity: 0.9;
+    background: #edf8ef;
 }
 
 
@@ -558,49 +523,15 @@ body {
 
 
 /* =====================================================
-   AGAIN BUTTON
+   FARMING TOOLS SECTION
 ===================================================== */
 
-.again-button {
-    width: 100%;
-    height: 50px;
-    margin-top: 20px;
-    border: 1px solid #2b9348;
-    background: white;
-    color: #237a3b;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
+.farming-tools-section {
+    padding: 70px 20px;
+    background: #f8faf8;
 }
 
-.again-button:hover {
-    background: #edf8ef;
-}
-
-
-/* =====================================================
-   FOOTER
-===================================================== */
-
-footer {
-    text-align: center;
-    padding: 30px;
-    background: #1f3024;
-    color: #dce6de;
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   SMART FARMER TOOLS
-========================================================= */
-
-.smart-tools {
-    padding: 80px 7%;
-    background: #f6faf5;
-}
-
-.section-heading {
+.section-header {
     text-align: center;
     max-width: 750px;
     margin: 0 auto 45px;
@@ -608,262 +539,50 @@ footer {
 
 .section-badge {
     display: inline-block;
-    padding: 8px 18px;
+    padding: 7px 16px;
     border-radius: 30px;
-    background: #e4f4e2;
-    color: #287b35;
+    background: #e8f5e9;
+    color: #2e7d32;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
-.section-heading h2 {
+.section-header h2 {
     margin: 15px 0 10px;
-    font-size: 36px;
-    color: #183b20;
+    font-size: 34px;
+    color: #1f2937;
 }
 
-.section-heading p {
-    color: #66736a;
-    line-height: 1.7;
+.section-header p {
+    color: #6b7280;
+    font-size: 16px;
 }
 
 
-/* =========================================================
-   CONTAINER
-========================================================= */
+/* =====================================================
+   FARMING TOOLS CONTAINER
+===================================================== */
 
 .tools-container {
-    max-width: 900px;
+    max-width: 1150px;
     margin: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
 }
 
 
-/* =========================================================
-   CALCULATOR CARD
-========================================================= */
+/* =====================================================
+   FARMING TOOL CARD
+===================================================== */
 
-.calculator-card {
+.farming-tool-card {
     background: white;
-    padding: 35px;
+    border: 1px solid #e5e7eb;
     border-radius: 20px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
-}
-
-.card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
-    background: #e7f5e5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    margin-bottom: 18px;
-}
-
-.calculator-card h3 {
-    color: #1c4926;
-    font-size: 24px;
-    margin-bottom: 8px;
-}
-
-.card-description {
-    color: #68736c;
-    line-height: 1.6;
-    margin-bottom: 25px;
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.calculator-card label {
-    display: block;
-    margin: 16px 0 7px;
-    color: #29452f;
-    font-weight: 600;
-}
-
-.calculator-card input,
-.calculator-card select {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 13px 14px;
-    border: 1px solid #d7e2d8;
-    border-radius: 10px;
-    background: #fbfdfb;
-    font-size: 15px;
-    outline: none;
-}
-
-.calculator-card input:focus,
-.calculator-card select:focus {
-    border-color: #55a75e;
-    box-shadow: 0 0 0 3px rgba(85, 167, 94, 0.12);
-}
-
-
-/* =========================================================
-   INPUT ROW
-========================================================= */
-
-.input-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
-}
-
-
-/* =========================================================
-   ADVANCED CONDITIONS
-========================================================= */
-
-.advanced-title {
-    margin-top: 30px;
-    padding-top: 22px;
-    border-top: 1px solid #e5ebe5;
-    font-size: 17px;
-    font-weight: 700;
-    color: #275631;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px 18px;
-}
-
-
-/* =========================================================
-   BUTTON
-========================================================= */
-
-.calculate-button {
-    width: 100%;
-    margin-top: 28px;
-    padding: 15px;
-    border: none;
-    border-radius: 11px;
-    background: #2f8739;
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.25s;
-}
-
-.calculate-button:hover {
-    background: #246d2d;
-    transform: translateY(-2px);
-}
-
-
-/* =========================================================
-   RESULT
-========================================================= */
-
-.calculator-result {
-    margin-top: 30px;
-    padding: 25px;
-    border-radius: 16px;
-    background: #eef8ed;
-    border: 1px solid #cde5ca;
-    text-align: center;
-}
-
-.result-icon {
-    font-size: 35px;
-    margin-bottom: 8px;
-}
-
-.calculator-result h3 {
-    margin-bottom: 15px;
-    color: #23592d;
-}
-
-.calculator-result p {
-    color: #59665c;
-    margin: 8px 0;
-}
-
-.big-result {
-    margin: 18px 0;
-    font-size: 32px;
-    font-weight: 800;
-    color: #21732d;
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.error-message {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 10px;
-    background: #fff0f0;
-    color: #a73535;
-    border: 1px solid #f0cccc;
-}
-/* =====================================================
-   FARMING TOOLS SECTION
-===================================================== */
-
-.tools-section {
-    padding: 80px 10%;
-    background: #f4f8f3;
-}
-
-.tools-heading {
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto 45px;
-}
-
-.tools-heading h2 {
-    font-size: 34px;
-    margin: 18px 0 12px;
-    color: #26382b;
-}
-
-.tools-heading p {
-    color: #718077;
-    line-height: 1.6;
-}
-
-
-/* =====================================================
-   TOOLS GRID
-===================================================== */
-
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-    max-width: 1100px;
-    margin: auto;
-}
-
-
-/* =====================================================
-   TOOL CARD
-===================================================== */
-
-.tool-card {
-    background: white;
-    border: 1px solid #e1ebe3;
-    border-radius: 22px;
-    padding: 32px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
-    transition: 0.3s;
-}
-
-.tool-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.09);
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
 }
 
 .tool-icon {
@@ -872,20 +591,20 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #e8f6eb;
-    border-radius: 16px;
-    font-size: 30px;
+    background: #ecfdf5;
+    border-radius: 15px;
+    font-size: 28px;
     margin-bottom: 18px;
 }
 
-.tool-card h3 {
-    font-size: 23px;
-    color: #1f3927;
-    margin-bottom: 10px;
+.tool-content h3 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    color: #1f2937;
 }
 
 .tool-description {
-    color: #718077;
+    color: #6b7280;
     line-height: 1.6;
     margin-bottom: 25px;
 }
@@ -896,7 +615,9 @@ footer {
 ===================================================== */
 
 .calculator-form {
-    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .tool-form-group {
@@ -932,7 +653,7 @@ footer {
 
 
 /* =====================================================
-   FORM ROW
+   TOOL FORM ROW
 ===================================================== */
 
 .tool-form-row {
@@ -948,64 +669,200 @@ footer {
 
 .tool-button {
     width: 100%;
-    height: 50px;
+    margin-top: 5px;
+    padding: 14px 20px;
     border: none;
-    border-radius: 10px;
-    background: #2b9348;
+    border-radius: 11px;
+    background: #16a34a;
     color: white;
     font-size: 15px;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .tool-button:hover {
-    background: #207437;
-    transform: translateY(-2px);
+    background: #15803d;
+}
+
+.tool-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 
 /* =====================================================
-   CALCULATOR RESULT
+   TOOL RESULT
 ===================================================== */
 
-.calculator-result {
-    margin-top: 20px;
-    padding: 18px;
-    border-radius: 14px;
-    min-height: 55px;
-    background: #f3f8f4;
-    border: 1px solid #e0ebe2;
-    color: #4d5d51;
-    line-height: 1.7;
+.tool-result {
+    margin-top: 25px;
+    padding: 22px;
+    background: #f8fafc;
+    border: 1px solid #dbe4e8;
+    border-radius: 15px;
+    animation: resultAppear 0.3s ease;
 }
 
-.calculator-result.success {
-    background: #eef9f0;
-    border-color: #cde8d1;
-    color: #315c3b;
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 18px;
 }
 
-.calculator-result.error {
-    background: #fff4f4;
-    border-color: #f0cccc;
-    color: #a53b3b;
+.result-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dcfce7;
+    border-radius: 12px;
+    font-size: 23px;
 }
 
-.result-main {
-    font-size: 18px;
-    color: #1e5d30;
-    margin-bottom: 7px;
+.result-header h3 {
+    margin: 0 0 3px;
+    font-size: 19px;
+    color: #1f2937;
 }
 
-.calculator-line {
-    font-size: 14px;
-    margin-top: 4px;
+.result-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
 }
 
 
 /* =====================================================
-   CROP REQUIREMENTS
+   TOOL RESULT ROWS
+===================================================== */
+
+.result-row,
+.requirement-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.result-row:last-of-type,
+.requirement-row:last-of-type {
+    border-bottom: none;
+}
+
+.result-row span,
+.requirement-row span {
+    color: #6b7280;
+}
+
+.result-row strong,
+.requirement-row strong {
+    color: #1f2937;
+    text-align: right;
+}
+
+
+/* =====================================================
+   TOOL RESULT STATUS
+===================================================== */
+
+.result-success,
+.result-warning {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 11px;
+}
+
+.result-success {
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.result-warning {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+}
+
+.result-success .status-icon,
+.result-warning .status-icon {
+    font-size: 20px;
+}
+
+.result-success strong,
+.result-warning strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.result-success p,
+.result-warning p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.result-warning p {
+    margin-bottom: 12px;
+}
+
+
+/* =====================================================
+   EXTRA LAND
+===================================================== */
+
+.extra-land {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.extra-land div {
+    background: white;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.extra-land strong {
+    display: block;
+    color: #c2410c;
+    font-size: 15px;
+}
+
+.extra-land span {
+    font-size: 11px;
+    color: #78716c;
+}
+
+
+/* =====================================================
+   TOOL ERROR
+===================================================== */
+
+.tool-error,
+.error-message {
+    margin-top: 20px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   CROP REQUIREMENT GUIDE
 ===================================================== */
 
 .requirements-result {
@@ -1032,11 +889,6 @@ footer {
     line-height: 1.5;
 }
 
-
-/* =====================================================
-   SELECTED CROP
-===================================================== */
-
 .selected-crop-name {
     padding: 15px 18px;
     background: #eaf7ed;
@@ -1046,11 +898,6 @@ footer {
     font-weight: bold;
     margin-bottom: 15px;
 }
-
-
-/* =====================================================
-   REQUIREMENT GRID
-===================================================== */
 
 .requirement-grid {
     display: grid;
@@ -1090,78 +937,8 @@ footer {
 
 
 /* =====================================================
-   HOW IT WORKS
+   TOP 3 CROPS
 ===================================================== */
-
-.how-section {
-    padding: 80px 10%;
-    background: white;
-}
-
-.how-heading {
-    max-width: 700px;
-    margin: auto;
-    text-align: center;
-}
-
-.how-heading h2 {
-    font-size: 34px;
-    margin: 18px 0 12px;
-}
-
-.how-heading p {
-    color: #718077;
-    line-height: 1.6;
-}
-
-
-/* =====================================================
-   HOW GRID
-===================================================== */
-
-.how-grid {
-    max-width: 1100px;
-    margin: 45px auto 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.how-card {
-    padding: 25px;
-    border: 1px solid #e3ebe4;
-    border-radius: 18px;
-    background: #fbfdfb;
-}
-
-.how-card > span {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: bold;
-    color: #2b9348;
-    background: #e8f6eb;
-    padding: 7px 10px;
-    border-radius: 8px;
-    margin-bottom: 18px;
-}
-
-.how-card h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.how-card p {
-    color: #718077;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-
-
-
-/* ============================================================
-   TOP 3 CROP RECOMMENDATIONS
-============================================================ */
 
 .top-crop-list {
     display: flex;
@@ -1227,8 +1004,9 @@ footer {
 }
 
 
-
-
+/* =====================================================
+   CONDITION WARNINGS
+===================================================== */
 
 .condition-warning-list {
     margin-top: 14px;
@@ -1241,13 +1019,10 @@ footer {
     display: flex;
     align-items: center;
     gap: 9px;
-
     padding: 9px 12px;
-
     background: #fff5f5;
     border: 1px solid #fecaca;
     border-radius: 9px;
-
     color: #b91c1c;
     font-size: 14px;
     font-weight: 500;
@@ -1256,3 +1031,117 @@ footer {
 .condition-warning span {
     line-height: 1.4;
 }
+
+
+/* =====================================================
+   HOW IT WORKS
+===================================================== */
+
+.how-section {
+    padding: 80px 10%;
+    background: white;
+}
+
+.how-heading {
+    max-width: 700px;
+    margin: auto;
+    text-align: center;
+}
+
+.how-heading h2 {
+    font-size: 34px;
+    margin: 18px 0 12px;
+}
+
+.how-heading p {
+    color: #718077;
+    line-height: 1.6;
+}
+
+.how-grid {
+    max-width: 1100px;
+    margin: 45px auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.how-card {
+    padding: 25px;
+    border: 1px solid #e3ebe4;
+    border-radius: 18px;
+    background: #fbfdfb;
+}
+
+.how-card > span {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #2b9348;
+    background: #e8f6eb;
+    padding: 7px 10px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+}
+
+.how-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.how-card p {
+    color: #718077;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   LOCATION WEATHER
+===================================================== */
+
+.weather-location-box {
+    margin: 10px 0 25px;
+    padding: 18px;
+    border-radius: 14px;
+    background: #f4f9f4;
+    border: 1px solid #dcebdd;
+}
+
+.weather-button {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.weather-button:hover {
+    opacity: 0.9;
+}
+
+.weather-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.weather-status {
+    margin: 10px 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+    text-align: center;
+    padding: 30px;
+    background: #1f3024;
+    color: #dce6de;
+    font-size: 13px;
+}
+

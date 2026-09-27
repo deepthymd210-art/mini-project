@@ -452,86 +452,130 @@
             </div>
 
 
+<!-- =====================================================
+     WEATHER CONDITIONS
+===================================================== -->
 
-            <!-- ==================================================
-                 WEATHER CONDITIONS
-            ================================================== -->
+<!-- ==================================================
+     WEATHER CONDITIONS
+================================================== -->
 
-            <div class="section-title">
+<div class="section-title">
 
-                <span>☁️</span>
+    <span>☁️</span>
 
-                <div>
+    <div>
 
-                    <h2>
-                        Weather Conditions
-                    </h2>
+        <h2>
+            Weather Conditions
+        </h2>
 
-                    <p>
-                        Enter current or expected conditions
-                    </p>
+        <p>
+            Enter current conditions or get weather automatically
+        </p>
 
-                </div>
+    </div>
 
-            </div>
-
-
-            <div class="form-grid">
-
-
-                <div class="form-group">
-
-                    <label>
-                        Rainfall (mm)
-                    </label>
-
-                    <input type="number"
-                           name="rainfall"
-                           step="0.01"
-                           value="{{ request.POST.rainfall }}"
-                           placeholder="Example: 1800"
-                           required>
-
-                </div>
+</div>
 
 
-                <div class="form-group">
+<!-- ==================================================
+     GET LOCATION WEATHER
+================================================== -->
 
-                    <label>
-                        Temperature (°C)
-                    </label>
+<div class="weather-location-box">
 
-                    <input type="number"
-                           name="temperature"
-                           step="0.01"
-                           value="{{ request.POST.temperature }}"
-                           placeholder="Example: 27"
-                           required>
+    <button
+        type="button"
+        class="weather-button"
+        id="getWeatherButton">
 
-                </div>
+        📍 Get Weather From My Location
 
+    </button>
 
-                <div class="form-group">
+    <p
+        id="weatherStatus"
+        class="weather-status">
 
-                    <label>
-                        Humidity (%)
-                    </label>
+        Click the button to get your current weather.
 
-                    <input type="number"
-                           name="humidity"
-                           step="0.01"
-                           min="0"
-                           max="100"
-                           value="{{ request.POST.humidity }}"
-                           placeholder="Example: 80"
-                           required>
+    </p>
 
-                </div>
-
-            </div>
+</div>
 
 
+<div class="form-grid">
 
+
+    <!-- ==================================================
+         RAINFALL
+    ================================================== -->
+
+    <div class="form-group">
+
+        <label>
+            Rainfall (mm)
+        </label>
+
+        <input
+            type="number"
+            name="rainfall"
+            id="rainfall"
+            step="0.01"
+            value="{{ request.POST.rainfall }}"
+            placeholder="Example: 1800"
+            required>
+
+    </div>
+
+
+    <!-- ==================================================
+         TEMPERATURE
+    ================================================== -->
+
+    <div class="form-group">
+
+        <label>
+            Temperature (°C)
+        </label>
+
+        <input
+            type="number"
+            name="temperature"
+            id="temperature"
+            step="0.01"
+            value="{{ request.POST.temperature }}"
+            placeholder="Example: 27"
+            required>
+
+    </div>
+
+
+    <!-- ==================================================
+         HUMIDITY
+    ================================================== -->
+
+    <div class="form-group">
+
+        <label>
+            Humidity (%)
+        </label>
+
+        <input
+            type="number"
+            name="humidity"
+            id="humidity"
+            step="0.01"
+            min="0"
+            max="100"
+            value="{{ request.POST.humidity }}"
+            placeholder="Example: 80"
+            required>
+
+    </div>
+
+</div>
             <!-- ==================================================
                  FARMING CONDITIONS
             ================================================== -->
@@ -1014,6 +1058,145 @@
 
 </section>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const weatherButton = document.getElementById("getWeatherButton");
+    const weatherStatus = document.getElementById("weatherStatus");
+
+    const rainfallInput = document.getElementById("rainfall");
+    const temperatureInput = document.getElementById("temperature");
+    const humidityInput = document.getElementById("humidity");
+
+    if (!weatherButton) return;
+
+    weatherButton.addEventListener("click", function () {
+
+        if (!navigator.geolocation) {
+            weatherStatus.textContent =
+                "❌ Geolocation is not supported by your browser.";
+            return;
+        }
+
+        weatherButton.disabled = true;
+        weatherButton.textContent = "⏳ Getting Location...";
+        weatherStatus.textContent =
+            "Please allow location access in your browser.";
+
+        navigator.geolocation.getCurrentPosition(
+
+            function (position) {
+
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                weatherButton.textContent = "⏳ Getting Weather...";
+                weatherStatus.textContent =
+                    "Fetching current weather conditions...";
+
+                // IMPORTANT:
+                // This Django template tag works because this code
+                // is inside yield_prediction.html.
+                const weatherURL =
+                    "{% url 'get_weather' %}" +
+                    "?lat=" + encodeURIComponent(latitude) +
+                    "&lon=" + encodeURIComponent(longitude);
+
+                console.log("Weather URL:", weatherURL);
+
+                fetch(weatherURL)
+
+                    .then(function (response) {
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Weather request failed: " +
+                                response.status
+                            );
+                        }
+
+                        return response.json();
+                    })
+
+                    .then(function (data) {
+
+                        console.log("Weather data:", data);
+
+                        if (!data.success) {
+                            throw new Error(
+                                data.error ||
+                                "Unable to get weather data."
+                            );
+                        }
+
+                        temperatureInput.value = data.temperature;
+                        humidityInput.value = data.humidity;
+                        rainfallInput.value = data.rainfall;
+
+                        weatherStatus.innerHTML =
+                            "✅ Weather updated successfully." +
+                            "<br>" +
+                            "🌡️ " + data.temperature + " °C &nbsp; | &nbsp;" +
+                            "💧 " + data.humidity + " % &nbsp; | &nbsp;" +
+                            "🌧️ " + data.rainfall + " mm";
+
+                        weatherButton.textContent =
+                            "📍 Update Weather";
+
+                        weatherButton.disabled = false;
+                    })
+
+                    .catch(function (error) {
+
+                        console.error("Weather error:", error);
+
+                        weatherStatus.textContent =
+                            "❌ " + error.message;
+
+                        weatherButton.textContent =
+                            "📍 Try Again";
+
+                        weatherButton.disabled = false;
+                    });
+            },
+
+            function (error) {
+
+                console.error("Location error:", error);
+
+                let message =
+                    "❌ Unable to get your location.";
+
+                if (error.code === error.PERMISSION_DENIED) {
+                    message =
+                        "❌ Location permission was denied. " +
+                        "Please allow location access and try again.";
+                }
+                else if (error.code === error.POSITION_UNAVAILABLE) {
+                    message =
+                        "❌ Your location is currently unavailable.";
+                }
+                else if (error.code === error.TIMEOUT) {
+                    message =
+                        "❌ Location request timed out. Please try again.";
+                }
+
+                weatherStatus.textContent = message;
+
+                weatherButton.textContent = "📍 Try Again";
+                weatherButton.disabled = false;
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 300000
+            }
+        );
+    });
+});
+</script>
+
 
 
 <!-- ======================================================
@@ -1021,113 +1204,6 @@
 ====================================================== -->
 
 <script src="{% static 'js/script.js' %}"></script>
-
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    /*
-     * Check whether the selected crop exists
-     * anywhere in the Top 3 recommendations.
-     */
-
-    const selectedCropElement =
-        document.querySelector('select[name="crop"]');
-
-    const suitabilityBox =
-        document.getElementById("cropSuitabilityResult");
-
-    const recommendationCards =
-        document.querySelectorAll(".top-crop-card");
-
-
-    if (
-        !selectedCropElement ||
-        !suitabilityBox ||
-        recommendationCards.length === 0
-    ) {
-        return;
-    }
-
-
-    const selectedCrop =
-        selectedCropElement.value
-            .trim()
-            .toLowerCase();
-
-
-    let cropFoundInRecommendations = false;
-
-
-    recommendationCards.forEach(function (card) {
-
-        const recommendedCrop =
-            card
-                .getAttribute("data-recommended-crop")
-                .trim()
-                .toLowerCase();
-
-
-        if (recommendedCrop === selectedCrop) {
-
-            cropFoundInRecommendations = true;
-
-        }
-
-    });
-
-
-    /*
-     * If the selected crop is present in Top 3,
-     * display Suitable.
-     */
-
-    if (cropFoundInRecommendations) {
-
-        suitabilityBox.innerHTML = `
-
-            <div class="suitable-result">
-
-                <div class="status-icon">
-                    ✓
-                </div>
-
-                <div>
-
-                    <h3>
-                        Crop is Suitable
-                    </h3>
-
-                    <p>
-                        The selected crop
-                        <strong>${selectedCropElement.value}</strong>
-                        is recommended for these conditions.
-                    </p>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-});
-
-
-/*
- * Reset prediction page.
- */
-
-function resetPrediction() {
-
-    window.location.href =
-        "{% url 'yield_prediction' %}";
-
-}
-
-</script>
 
 
 </body>
