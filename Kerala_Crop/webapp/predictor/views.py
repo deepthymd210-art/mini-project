@@ -1,3 +1,7 @@
+# ============================================================
+# IMPORTS
+# ============================================================
+
 import os
 import joblib
 import pandas as pd
@@ -9,7 +13,7 @@ from django.shortcuts import render
 
 
 # ============================================================
-# PATHS
+# MODEL DIRECTORY
 # ============================================================
 
 MODEL_DIR = os.path.join(
@@ -17,69 +21,238 @@ MODEL_DIR = os.path.join(
     "models"
 )
 
-DATA_DIR = os.path.join(
-    settings.BASE_DIR.parent,
-    "data"
-)
+
+# ============================================================
+# MODEL PATHS
+# ============================================================
 
 YIELD_MODEL_PATH = os.path.join(
     MODEL_DIR,
     "random_forest_crop_yield.pkl"
 )
 
-DATASET_PATH = os.path.join(
-    DATA_DIR,
-    "kerala_crop_project_final_15000_recent.csv"
+PRODUCTION_MODEL_PATH = os.path.join(
+    MODEL_DIR,
+    "random_forest_production_yield.pkl"
 )
-
-
-# ============================================================
-# LOAD DATASET
-# ============================================================
-
-try:
-    df = pd.read_csv(DATASET_PATH)
-    print("Dataset loaded successfully.")
-
-except Exception as e:
-    df = pd.DataFrame()
-    print("Dataset loading error:", e)
-
-
-# ============================================================
-# LOAD YIELD MODEL
-# ============================================================
-
-try:
-    yield_model = joblib.load(YIELD_MODEL_PATH)
-    print("Yield model loaded successfully.")
-
-except Exception as e:
-    yield_model = None
-    print("Yield model loading error:", e)
 
 
 # ============================================================
 # CROP LIST
 # ============================================================
 
-def get_crop_list():
-
-    if df.empty or "Crop" not in df.columns:
-        return []
-
-    return sorted(
-        df["Crop"]
-        .dropna()
-        .astype(str)
-        .str.strip()
-        .unique()
-        .tolist()
-    )
+CROP_LIST = [
+    "Arecanut",
+    "Banana",
+    "Betel leaves",
+    "Cardamom",
+    "Cashew",
+    "Cloves",
+    "Cocoa",
+    "Coconut",
+    "Coffee",
+    "Ginger",
+    "Jack",
+    "Mango",
+    "Nutmeg",
+    "Paddy",
+    "Pappaya",
+    "Pepper",
+    "Pineapple",
+    "Plantain",
+    "Rubber",
+    "Tapioca",
+    "Tea",
+    "Turmeric"
+]
 
 
 # ============================================================
-# HOME PAGE
+# LOAD MODEL
+# ============================================================
+
+def load_model(model_path, model_name):
+
+    try:
+
+        model = joblib.load(model_path)
+
+        # Handle an old dictionary-style saved model
+        if isinstance(model, dict):
+
+            if "model" in model:
+
+                model = model["model"]
+
+            else:
+
+                raise ValueError(
+                    f"{model_name} is a dictionary but "
+                    f"does not contain a usable 'model'."
+                )
+
+        print()
+        print("=" * 70)
+        print(f"✅ {model_name} loaded successfully")
+        print("Path:", model_path)
+
+        if hasattr(model, "feature_names_in_"):
+
+            print(
+                "Features:",
+                list(model.feature_names_in_)
+            )
+
+        print("=" * 70)
+
+        return model
+
+    except Exception as e:
+
+        print()
+        print("=" * 70)
+        print(f"❌ ERROR loading {model_name}")
+        print("Path:", model_path)
+        print("Error:", e)
+        print("=" * 70)
+
+        return None
+
+
+# ============================================================
+# LOAD MAIN YIELD MODEL
+# ============================================================
+
+yield_model = load_model(
+    YIELD_MODEL_PATH,
+    "Random Forest Crop Yield Model"
+)
+
+
+# ============================================================
+# LOAD TOOL 1 MODEL
+# ============================================================
+
+production_yield_model = load_model(
+    PRODUCTION_MODEL_PATH,
+    "Random Forest Production Model"
+)
+
+
+# ============================================================
+# EXPECTED MAIN MODEL FEATURES
+# ============================================================
+
+EXPECTED_YIELD_FEATURES = [
+
+    "Crop",
+
+    "Area",
+
+    "Area_Cent",
+
+    "Soil_Type",
+
+    "Soil_pH",
+
+    "Nitrogen_N_kg_ha",
+
+    "Phosphorus_P_kg_ha",
+
+    "Potassium_K_kg_ha",
+
+    "Rainfall_mm",
+
+    "Temperature_C",
+
+    "Humidity_percent",
+
+    "Irrigation_Level",
+
+    "Season"
+]
+
+
+# ============================================================
+# PREDICTION HELPER
+# ============================================================
+
+def predict_crop_yield(model, data):
+
+    if model is None:
+
+        raise ValueError(
+            "Random Forest yield model could not be loaded."
+        )
+
+    df = data.copy()
+
+    # --------------------------------------------------------
+    # If sklearn saved feature names are available,
+    # use EXACTLY those columns and order.
+    # --------------------------------------------------------
+
+    if hasattr(model, "feature_names_in_"):
+
+        model_features = list(
+            model.feature_names_in_
+        )
+
+        missing = [
+
+            feature
+
+            for feature in model_features
+
+            if feature not in df.columns
+        ]
+
+        if missing:
+
+            raise ValueError(
+                "The saved Random Forest model requires "
+                f"missing features: {missing}"
+            )
+
+        df = df[model_features]
+
+    else:
+
+        missing = [
+
+            feature
+
+            for feature in EXPECTED_YIELD_FEATURES
+
+            if feature not in df.columns
+        ]
+
+        if missing:
+
+            raise ValueError(
+                "Missing model features: "
+                f"{missing}"
+            )
+
+        df = df[EXPECTED_YIELD_FEATURES]
+
+    # --------------------------------------------------------
+    # PREDICT
+    # --------------------------------------------------------
+
+    prediction = model.predict(df)
+
+    prediction = float(prediction[0])
+
+    if prediction < 0:
+
+        prediction = 0.0
+
+    return prediction
+
+
+# ============================================================
+# HOME
 # ============================================================
 
 def index(request):
@@ -88,33 +261,75 @@ def index(request):
         request,
         "index.html",
         {
-            "crop_list": get_crop_list()
+            "crop_list": CROP_LIST
         }
     )
 
 
 # ============================================================
-# TOOL 1
-# PRODUCTION & LAND CALCULATOR
+# CROP YIELD PREDICTION
 # ============================================================
 
-def production_land_calculator(request):
+def yield_prediction(request):
 
-    context = {
-        "crop_list": get_crop_list()
-    }
+    # --------------------------------------------------------
+    # DEFAULT OUTPUT
+    # --------------------------------------------------------
 
-    if request.method != "POST":
-        return render(
-            request,
-            "index.html",
-            context
-        )
+    predicted_yield = None
 
-    try:
+    predicted_total_production = None
+
+    predicted_tonnes = None
+
+    top_recommendations = []
+
+    crop_suitable = None
+
+    error = None
+
+    prediction_done = False
+
+
+    # --------------------------------------------------------
+    # DEFAULT INPUT VALUES
+    # --------------------------------------------------------
+
+    crop = ""
+
+    area_value = ""
+
+    area_unit = "hectare"
+
+    soil_type = ""
+
+    soil_ph = ""
+
+    nitrogen = ""
+
+    phosphorus = ""
+
+    potassium = ""
+
+    rainfall = ""
+
+    temperature = ""
+
+    humidity = ""
+
+    irrigation = ""
+
+    season = ""
+
+
+    # ========================================================
+    # POST
+    # ========================================================
+
+    if request.method == "POST":
 
         # ----------------------------------------------------
-        # USER INPUT
+        # FORM VALUES
         # ----------------------------------------------------
 
         crop = request.POST.get(
@@ -122,668 +337,256 @@ def production_land_calculator(request):
             ""
         ).strip()
 
-        available_land = float(
-            request.POST.get(
-                "available_land",
-                0
-            )
-        )
+        area_value = request.POST.get(
+            "area",
+            ""
+        ).strip()
 
-        land_unit = request.POST.get(
-            "land_unit",
-            "cent"
+        area_unit = request.POST.get(
+            "area_unit",
+            "hectare"
         ).strip().lower()
 
-        desired_production = float(
-            request.POST.get(
-                "desired_production",
-                0
-            )
-        )
+        soil_type = request.POST.get(
+            "soil_type",
+            ""
+        ).strip()
 
-        production_unit = request.POST.get(
-            "production_unit",
-            "kg"
-        ).strip().lower()
+        soil_ph = request.POST.get(
+            "soil_ph",
+            ""
+        ).strip()
+
+        nitrogen = request.POST.get(
+            "nitrogen",
+            ""
+        ).strip()
+
+        phosphorus = request.POST.get(
+            "phosphorus",
+            ""
+        ).strip()
+
+        potassium = request.POST.get(
+            "potassium",
+            ""
+        ).strip()
+
+        rainfall = request.POST.get(
+            "rainfall",
+            ""
+        ).strip()
+
+        temperature = request.POST.get(
+            "temperature",
+            ""
+        ).strip()
+
+        humidity = request.POST.get(
+            "humidity",
+            ""
+        ).strip()
+
+        irrigation = request.POST.get(
+            "irrigation",
+            ""
+        ).strip()
+
+        season = request.POST.get(
+            "season",
+            ""
+        ).strip()
 
 
-        # ----------------------------------------------------
+        # ====================================================
         # VALIDATION
-        # ----------------------------------------------------
+        # ====================================================
 
         if not crop:
-            raise ValueError(
-                "Please select a crop."
-            )
 
-        if available_land <= 0:
-            raise ValueError(
-                "Please enter valid available land."
-            )
+            error = "Please select a crop."
 
-        if desired_production <= 0:
-            raise ValueError(
-                "Please enter valid desired production."
-            )
+        elif crop not in CROP_LIST:
 
-        if land_unit not in {
-            "cent",
-            "acre",
-            "hectare"
-        }:
-            raise ValueError(
-                "Invalid land unit."
-            )
+            error = "Please select a valid crop."
 
-        if production_unit not in {
-            "kg",
-            "tonne"
-        }:
-            raise ValueError(
-                "Invalid production unit."
-            )
+        elif not area_value:
 
+            error = "Please enter cultivated area."
 
-        # ----------------------------------------------------
-        # FIND CROP DATA
-        # ----------------------------------------------------
+        elif not soil_type:
 
-        crop_data = df[
-            df["Crop"]
-            .astype(str)
-            .str.strip()
-            .str.lower()
-            == crop.lower()
-        ]
+            error = "Please select soil type."
 
+        elif not soil_ph:
 
-        if crop_data.empty:
-            raise ValueError(
-                f"No data found for {crop}."
-            )
+            error = "Please enter soil pH."
 
+        elif not nitrogen:
 
-        # ----------------------------------------------------
-        # GET CROP YIELD
-        # ----------------------------------------------------
+            error = "Please enter nitrogen value."
 
-        yield_values = pd.to_numeric(
-            crop_data["Yield_kg_ha"],
-            errors="coerce"
-        ).dropna()
+        elif not phosphorus:
 
+            error = "Please enter phosphorus value."
 
-        if yield_values.empty:
-            raise ValueError(
-                f"Yield data is not available for {crop}."
-            )
+        elif not potassium:
 
+            error = "Please enter potassium value."
 
-        yield_kg_ha = yield_values.mean()
+        elif not rainfall:
 
+            error = "Please enter rainfall."
 
-        # ----------------------------------------------------
-        # DESIRED PRODUCTION → KG
-        # ----------------------------------------------------
+        elif not temperature:
 
-        if production_unit == "tonne":
-            desired_kg = desired_production * 1000
-        else:
-            desired_kg = desired_production
+            error = "Please enter temperature."
 
+        elif not humidity:
 
-        # ----------------------------------------------------
-        # REQUIRED LAND
-        # ----------------------------------------------------
+            error = "Please enter humidity."
 
-        required_hectare = (
-            desired_kg / yield_kg_ha
-        )
+        elif not irrigation:
 
-        required_cent = (
-            required_hectare * 247.105
-        )
+            error = "Please select irrigation level."
 
-        required_acre = (
-            required_hectare / 0.404686
-        )
+        elif not season:
 
+            error = "Please select season."
 
-        # ----------------------------------------------------
-        # AVAILABLE LAND → HECTARE
-        # ----------------------------------------------------
+        elif yield_model is None:
 
-        if land_unit == "cent":
-
-            available_hectare = (
-                available_land / 247.105
-            )
-
-        elif land_unit == "acre":
-
-            available_hectare = (
-                available_land * 0.404686
+            error = (
+                "Random Forest crop yield model "
+                "could not be loaded."
             )
 
         else:
 
-            available_hectare = available_land
+            try:
 
+                # =================================================
+                # NUMERIC VALUES
+                # =================================================
 
-        # ----------------------------------------------------
-        # LAND SUFFICIENCY
-        # ----------------------------------------------------
+                area = float(area_value)
 
-        land_sufficient = (
-            available_hectare >= required_hectare
-        )
+                soil_ph_value = float(soil_ph)
 
+                nitrogen_value = float(nitrogen)
 
-        # ----------------------------------------------------
-        # EXTRA LAND REQUIRED
-        # ----------------------------------------------------
+                phosphorus_value = float(phosphorus)
 
-        extra_hectare = max(
-            required_hectare - available_hectare,
-            0
-        )
+                potassium_value = float(kalium_value) if False else float(potassium)
 
-        extra_cent = (
-            extra_hectare * 247.105
-        )
+                rainfall_value = float(rainfall)
 
-        extra_acre = (
-            extra_hectare / 0.404686
-        )
+                temperature_value = float(temperature)
 
+                humidity_value = float(humidity)
 
-        # ----------------------------------------------------
-        # RESULT
-        # ----------------------------------------------------
 
-        context.update({
+                # =================================================
+                # VALIDATION
+                # =================================================
 
-            "tool1_result": True,
-
-            "tool1_crop": crop,
-
-            "tool1_yield": round(
-                yield_kg_ha,
-                2
-            ),
-
-            "tool1_required_hectare": round(
-                required_hectare,
-                2
-            ),
-
-            "tool1_required_acre": round(
-                required_acre,
-                2
-            ),
-
-            "tool1_required_cent": round(
-                required_cent,
-                2
-            ),
-
-            "tool1_available_land":
-                available_land,
-
-            "tool1_land_unit":
-                land_unit,
-
-            "tool1_desired_production":
-                desired_production,
-
-            "tool1_production_unit":
-                production_unit,
-
-            "tool1_land_sufficient":
-                land_sufficient,
-
-            "tool1_extra_hectare": round(
-                extra_hectare,
-                2
-            ),
-
-            "tool1_extra_acre": round(
-                extra_acre,
-                2
-            ),
-
-            "tool1_extra_cent": round(
-                extra_cent,
-                2
-            ),
-        })
-
-
-    except (ValueError, TypeError) as e:
-
-        context["tool1_error"] = str(e)
-
-
-    except Exception as e:
-
-        context["tool1_error"] = (
-            "Calculation error: " + str(e)
-        )
-
-
-    return render(
-        request,
-        "index.html",
-        context
-    )
-
-
-# ============================================================
-# TOOL 2
-# CROP REQUIREMENT GUIDE
-# ============================================================
-
-def crop_requirement_guide(request):
-
-    context = {
-        "crop_list": get_crop_list()
-    }
-
-    if request.method != "POST":
-
-        return render(
-            request,
-            "index.html",
-            context
-        )
-
-
-    crop = request.POST.get(
-        "crop",
-        ""
-    ).strip()
-
-
-    # --------------------------------------------------------
-    # VALIDATION
-    # --------------------------------------------------------
-
-    if not crop:
-
-        context["tool2_error"] = (
-            "Please select a crop."
-        )
-
-        return render(
-            request,
-            "index.html",
-            context
-        )
-
-
-    # --------------------------------------------------------
-    # FIND CROP DATA
-    # --------------------------------------------------------
-
-    crop_data = df[
-        df["Crop"]
-        .astype(str)
-        .str.strip()
-        .str.lower()
-        == crop.lower()
-    ].copy()
-
-
-    if crop_data.empty:
-
-        context["tool2_error"] = (
-            f"No data found for {crop}."
-        )
-
-        return render(
-            request,
-            "index.html",
-            context
-        )
-
-
-    # --------------------------------------------------------
-    # NUMERIC RANGE
-    # --------------------------------------------------------
-
-    def get_range(column):
-
-        values = pd.to_numeric(
-            crop_data[column],
-            errors="coerce"
-        ).dropna()
-
-
-        if values.empty:
-            return "Not available"
-
-
-        minimum = values.min()
-        maximum = values.max()
-
-
-        if minimum == maximum:
-            return f"{minimum:.2f}"
-
-
-        return (
-            f"{minimum:.2f} - "
-            f"{maximum:.2f}"
-        )
-
-
-    # --------------------------------------------------------
-    # TEXT VALUES
-    # --------------------------------------------------------
-
-    def get_values(column):
-
-        values = (
-            crop_data[column]
-            .dropna()
-            .astype(str)
-            .str.strip()
-            .unique()
-            .tolist()
-        )
-
-        return ", ".join(values)
-
-
-    # --------------------------------------------------------
-    # RESULT
-    # --------------------------------------------------------
-
-    context.update({
-
-        "tool2_result": True,
-
-        "tool2_crop": crop,
-
-        "tool2_soil":
-            get_values("Soil_Type"),
-
-        "tool2_ph":
-            get_range("Soil_pH"),
-
-        "tool2_nitrogen":
-            get_range(
-                "Nitrogen_N_kg_ha"
-            ),
-
-        "tool2_phosphorus":
-            get_range(
-                "Phosphorus_P_kg_ha"
-            ),
-
-        "tool2_potassium":
-            get_range(
-                "Potassium_K_kg_ha"
-            ),
-
-        "tool2_rainfall":
-            get_range(
-                "Rainfall_mm"
-            ),
-
-        "tool2_temperature":
-            get_range(
-                "Temperature_C"
-            ),
-
-        "tool2_humidity":
-            get_range(
-                "Humidity_percent"
-            ),
-
-        "tool2_irrigation":
-            get_values(
-                "Irrigation_Level"
-            ),
-
-        "tool2_season":
-            get_values(
-                "Season"
-            ),
-    })
-
-
-    return render(
-        request,
-        "index.html",
-        context
-    )
-
-
-# ============================================================
-# YIELD PREDICTION
-# ============================================================
-
-def yield_prediction(request):
-
-    predicted_yield = None
-    predicted_tonnes = None
-    top_recommendations = []
-    crop_suitable = None
-    error = None
-
-
-    # --------------------------------------------------------
-    # DEFAULT VALUES
-    # --------------------------------------------------------
-
-    crop = ""
-    area_value = ""
-    area_unit = "hectare"
-
-    soil_type = ""
-    soil_ph = ""
-
-    nitrogen = ""
-    phosphorus = ""
-    potassium = ""
-
-    rainfall = ""
-    temperature = ""
-    humidity = ""
-
-    irrigation = ""
-    season = ""
-
-
-    # --------------------------------------------------------
-    # POST
-    # --------------------------------------------------------
-
-    if request.method == "POST":
-
-        try:
-
-            # ------------------------------------------------
-            # GET INPUTS
-            # ------------------------------------------------
-
-            crop = request.POST.get(
-                "crop",
-                ""
-            ).strip()
-
-            area_value = request.POST.get(
-                "area",
-                ""
-            ).strip()
-
-            area_unit = request.POST.get(
-                "area_unit",
-                "hectare"
-            ).strip().lower()
-
-            soil_type = request.POST.get(
-                "soil_type",
-                ""
-            ).strip()
-
-            soil_ph = request.POST.get(
-                "soil_ph",
-                ""
-            ).strip()
-
-            nitrogen = request.POST.get(
-                "nitrogen",
-                ""
-            ).strip()
-
-            phosphorus = request.POST.get(
-                "phosphorus",
-                ""
-            ).strip()
-
-            potassium = request.POST.get(
-                "potassium",
-                ""
-            ).strip()
-
-            rainfall = request.POST.get(
-                "rainfall",
-                ""
-            ).strip()
-
-            temperature = request.POST.get(
-                "temperature",
-                ""
-            ).strip()
-
-            humidity = request.POST.get(
-                "humidity",
-                ""
-            ).strip()
-
-            irrigation = request.POST.get(
-                "irrigation",
-                ""
-            ).strip()
-
-            season = request.POST.get(
-                "season",
-                ""
-            ).strip()
-
-
-            # ------------------------------------------------
-            # VALIDATION
-            # ------------------------------------------------
-
-            required_fields = {
-                "crop": crop,
-                "cultivated area": area_value,
-                "soil type": soil_type,
-                "soil pH": soil_ph,
-                "nitrogen value": nitrogen,
-                "phosphorus value": phosphorus,
-                "potassium value": potassium,
-                "rainfall": rainfall,
-                "temperature": temperature,
-                "humidity": humidity,
-                "irrigation level": irrigation,
-                "season": season,
-            }
-
-
-            for field_name, value in required_fields.items():
-
-                if not value:
+                if area <= 0:
 
                     raise ValueError(
-                        f"Please enter/select {field_name}."
+                        "Cultivated area must be greater than 0."
+                    )
+
+                if soil_ph_value <= 0 or soil_ph_value > 14:
+
+                    raise ValueError(
+                        "Soil pH must be between 0 and 14."
+                    )
+
+                if nitrogen_value < 0:
+
+                    raise ValueError(
+                        "Nitrogen cannot be negative."
+                    )
+
+                if phosphorus_value < 0:
+
+                    raise ValueError(
+                        "Phosphorus cannot be negative."
+                    )
+
+                if potassium_value < 0:
+
+                    raise ValueError(
+                        "Potassium cannot be negative."
+                    )
+
+                if rainfall_value < 0:
+
+                    raise ValueError(
+                        "Rainfall cannot be negative."
+                    )
+
+                if humidity_value < 0 or humidity_value > 100:
+
+                    raise ValueError(
+                        "Humidity must be between 0 and 100."
                     )
 
 
-            # ------------------------------------------------
-            # NUMERIC VALUES
-            # ------------------------------------------------
+                # =================================================
+                # AREA CONVERSION
+                # =================================================
 
-            area = float(area_value)
-            soil_ph_value = float(soil_ph)
-            nitrogen_value = float(nitrogen)
-            phosphorus_value = float(phosphorus)
-            potassium_value = float(potassium)
-            rainfall_value = float(rainfall)
-            temperature_value = float(temperature)
-            humidity_value = float(humidity)
+                if area_unit == "cent":
 
+                    area_cent = area
 
-            if area <= 0:
+                    area_hectare = (
+                        area / 247.105
+                    )
 
-                raise ValueError(
-                    "Cultivated area must be greater than 0."
-                )
+                elif area_unit == "acre":
 
+                    area_hectare = (
+                        area * 0.404686
+                    )
 
-            # ------------------------------------------------
-            # AREA CONVERSION
-            # ------------------------------------------------
+                    area_cent = (
+                        area_hectare * 247.105
+                    )
 
-            if area_unit == "hectare":
+                elif area_unit == "hectare":
 
-                area_hectare = area
+                    area_hectare = area
 
-            elif area_unit == "acre":
+                    area_cent = (
+                        area * 247.105
+                    )
 
-                area_hectare = (
-                    area * 0.404686
-                )
+                else:
 
-            elif area_unit == "cent":
-
-                area_hectare = (
-                    area / 247.105
-                )
-
-            else:
-
-                raise ValueError(
-                    "Invalid area unit."
-                )
+                    raise ValueError(
+                        "Invalid area unit."
+                    )
 
 
-            area_cent = (
-                area_hectare * 247.105
-            )
+                # =================================================
+                # SAME FARMING CONDITIONS FOR ALL CROPS
+                # =================================================
 
+                common_data = {
 
-            # ------------------------------------------------
-            # CHECK MODEL
-            # ------------------------------------------------
+                    "Area":
+                        area_hectare,
 
-            if yield_model is None:
+                    "Area_Cent":
+                        area_cent,
 
-                raise ValueError(
-                    "Yield model is not available."
-                )
+                    "Soil_Type":
+                        soil_type,
 
-
-            # ------------------------------------------------
-            # CREATE MODEL INPUT
-            # ------------------------------------------------
-
-            def create_crop_input(crop_name):
-
-                return pd.DataFrame([{
-
-                    "Crop": crop_name,
-
-                    "Area": area_hectare,
-
-                    "Area_Cent": area_cent,
-
-                    "Soil_Type": soil_type,
-
-                    "Soil_pH": soil_ph_value,
+                    "Soil_pH":
+                        soil_ph_value,
 
                     "Nitrogen_N_kg_ha":
                         nitrogen_value,
@@ -807,198 +610,351 @@ def yield_prediction(request):
                         irrigation,
 
                     "Season":
-                        season,
-
-                }])
-
-
-            # ------------------------------------------------
-            # SELECTED CROP
-            # ------------------------------------------------
-
-            selected_input = create_crop_input(
-                crop
-            )
-
-            yield_per_hectare = float(
-                yield_model.predict(
-                    selected_input
-                )[0]
-            )
-
-            yield_per_hectare = max(
-                yield_per_hectare,
-                0
-            )
+                        season
+                }
 
 
-            # ------------------------------------------------
-            # TOTAL PRODUCTION
-            # ------------------------------------------------
+                # =================================================
+                # CURRENT SELECTED CROP
+                # =================================================
 
-            total_production = (
-                yield_per_hectare
-                * area_hectare
-            )
+                selected_data = {
 
-            predicted_yield = round(
-                total_production,
-                2
-            )
+                    "Crop":
+                        crop,
 
-            predicted_tonnes = round(
-                total_production / 1000,
-                2
-            )
+                    **common_data
+                }
 
 
-            # ------------------------------------------------
-            # TOP 3 CROPS
-            # ------------------------------------------------
-            # No crop recommendation model is used.
-            # The yield model tests every crop using
-            # the same user-entered farming conditions.
-            # ------------------------------------------------
-
-            all_crops = get_crop_list()
-
-            all_crop_production = []
-
-
-            for test_crop in all_crops:
-
-                crop_input = create_crop_input(
-                    test_crop
+                selected_df = pd.DataFrame(
+                    [selected_data]
                 )
 
-                crop_yield = float(
-                    yield_model.predict(
-                        crop_input
-                    )[0]
+
+                # =================================================
+                # PREDICT SELECTED CROP YIELD
+                # =================================================
+
+                predicted_yield = predict_crop_yield(
+                    yield_model,
+                    selected_df
                 )
 
-                crop_yield = max(
-                    crop_yield,
-                    0
+
+                # =================================================
+                # TOTAL PRODUCTION
+                #
+                # predicted_yield = kg/hectare
+                #
+                # area_hectare = hectare
+                #
+                # total = kg/hectare × hectare
+                # =================================================
+
+                predicted_total_production = (
+
+                    predicted_yield
+                    *
+                    area_hectare
+
                 )
 
-                crop_production = (
-                    crop_yield
-                    * area_hectare
+
+                predicted_total_production = round(
+                    predicted_total_production,
+                    2
                 )
 
-                all_crop_production.append({
 
-                    "crop":
-                        test_crop,
+                # =================================================
+                # TONNES
+                #
+                # IMPORTANT:
+                # ALWAYS CONVERT TOTAL KG TO TONNES.
+                #
+                # 1000 kg = 1 tonne
+                # =================================================
 
-                    "production":
-                        round(
-                            crop_production,
-                            2
-                        ),
+                predicted_tonnes = round(
 
-                    "tonnes":
-                        round(
-                            crop_production / 1000,
-                            2
-                        ),
-                })
+                    predicted_total_production
+                    /
+                    1000,
 
+                    2
 
-            # ------------------------------------------------
-            # SORT HIGHEST → LOWEST
-            # ------------------------------------------------
-
-            all_crop_production.sort(
-                key=lambda item: item["production"],
-                reverse=True
-            )
+                )
 
 
-            # ------------------------------------------------
-            # TOP 3 ONLY
-            # ------------------------------------------------
+                # =================================================
+                # DEBUG OUTPUT
+                # =================================================
 
-            top_recommendations = (
-                all_crop_production[:3]
-            )
+                print()
+                print("=" * 70)
+                print("SELECTED CROP PREDICTION")
+                print("=" * 70)
+
+                print(
+                    "Crop:",
+                    crop
+                )
+
+                print(
+                    "Area:",
+                    area,
+                    area_unit
+                )
+
+                print(
+                    "Area hectare:",
+                    area_hectare
+                )
+
+                print(
+                    "Predicted yield kg/ha:",
+                    predicted_yield
+                )
+
+                print(
+                    "Total production kg:",
+                    predicted_total_production
+                )
+
+                print(
+                    "Total production tonnes:",
+                    predicted_tonnes
+                )
+
+                print("=" * 70)
 
 
-            # ------------------------------------------------
-            # ADD RANK
-            # ------------------------------------------------
+                # =================================================
+                # TOP 3 RECOMMENDATIONS
+                #
+                # VERY IMPORTANT:
+                #
+                # Every crop is predicted using:
+                #
+                # 1. SAME area
+                # 2. SAME soil
+                # 3. SAME pH
+                # 4. SAME N
+                # 5. SAME P
+                # 6. SAME K
+                # 7. SAME rainfall
+                # 8. SAME temperature
+                # 9. SAME humidity
+                # 10. SAME irrigation
+                # 11. SAME season
+                #
+                # ONLY "Crop" changes.
+                # =================================================
 
-            for rank, item in enumerate(
-                top_recommendations,
-                start=1
-            ):
-
-                item["rank"] = rank
+                recommendation_results = []
 
 
-            # ------------------------------------------------
-            # SELECTED CROP STATUS
-            # ------------------------------------------------
+                for recommendation_crop in CROP_LIST:
 
-            if top_recommendations:
+                    recommendation_data = {
 
-                crop_suitable = any(
-                    item["crop"].lower()
-                    == crop.lower()
+                        "Crop":
+                            recommendation_crop,
+
+                        **common_data
+                    }
+
+
+                    recommendation_df = pd.DataFrame(
+                        [recommendation_data]
+                    )
+
+
+                    # ------------------------------------------------
+                    # Predict this crop using SAME model
+                    # ------------------------------------------------
+
+                    recommendation_yield = predict_crop_yield(
+
+                        yield_model,
+
+                        recommendation_df
+
+                    )
+
+
+                    # ------------------------------------------------
+                    # Total production
+                    # ------------------------------------------------
+
+                    recommendation_production = (
+
+                        recommendation_yield
+                        *
+                        area_hectare
+
+                    )
+
+
+                    recommendation_production = round(
+                        recommendation_production,
+                        2
+                    )
+
+
+                    # ------------------------------------------------
+                    # Tonnes
+                    # ------------------------------------------------
+
+                    recommendation_tonnes = round(
+
+                        recommendation_production
+                        /
+                        1000,
+
+                        2
+
+                    )
+
+
+                    recommendation_results.append({
+
+                        "crop":
+                            recommendation_crop,
+
+                        "yield":
+                            round(
+                                recommendation_yield,
+                                2
+                            ),
+
+                        "production":
+                            recommendation_production,
+
+                        "tonnes":
+                            recommendation_tonnes
+
+                    })
+
+
+                # =================================================
+                # SORT BY TOTAL PRODUCTION
+                #
+                # HIGHEST → LOWEST
+                # =================================================
+
+                recommendation_results.sort(
+
+                    key=lambda item:
+                        item["production"],
+
+                    reverse=True
+
+                )
+
+
+                # =================================================
+                # TOP 3
+                # =================================================
+
+                top_recommendations = (
+
+                    recommendation_results[:3]
+
+                )
+
+
+                # =================================================
+                # CHECK WHETHER SELECTED CROP IS TOP 3
+                # =================================================
+
+                top_crop_names = [
+
+                    item["crop"]
+
                     for item in top_recommendations
+
+                ]
+
+
+                crop_suitable = (
+
+                    crop in top_crop_names
+
                 )
 
 
-        except ValueError as e:
+                # =================================================
+                # DEBUG TOP 3
+                # =================================================
 
-            error = str(e)
+                print()
+                print("=" * 70)
+                print("TOP 3 CROP PRODUCTION")
+                print("=" * 70)
 
-            predicted_yield = None
-            predicted_tonnes = None
-            top_recommendations = []
-            crop_suitable = None
+                for item in top_recommendations:
+
+                    print(
+
+                        item["crop"],
+                        "->",
+                        item["production"],
+                        "kg ->",
+                        item["tonnes"],
+                        "tonnes"
+
+                    )
+
+                print("=" * 70)
 
 
-        except Exception as e:
-
-            error = (
-                "Prediction error: "
-                + str(e)
-            )
-
-            predicted_yield = None
-            predicted_tonnes = None
-            top_recommendations = []
-            crop_suitable = None
+                prediction_done = True
 
 
-    # --------------------------------------------------------
+            except ValueError as e:
+
+                error = str(e)
+
+            except Exception as e:
+
+                error = (
+                    f"Prediction error: {str(e)}"
+                )
+
+                print(
+                    "PREDICTION ERROR:",
+                    e
+                )
+
+
+    # ============================================================
     # CONTEXT
-    # --------------------------------------------------------
+    # ============================================================
 
     context = {
 
-        "predicted_yield":
-            predicted_yield,
+        # --------------------------------------------------------
+        # Crop list
+        # --------------------------------------------------------
 
-        "predicted_tonnes":
-            predicted_tonnes,
+        "crop_list":
+            CROP_LIST,
 
-        "top_recommendations":
-            top_recommendations,
 
-        "crop_suitable":
-            crop_suitable,
+        # --------------------------------------------------------
+        # Form values
+        # --------------------------------------------------------
+
+        "crop":
+            crop,
 
         "area_value":
             area_value,
 
         "area_unit":
             area_unit,
-
-        "crop":
-            crop,
 
         "soil_type":
             soil_type,
@@ -1030,15 +986,518 @@ def yield_prediction(request):
         "season":
             season,
 
+
+        # --------------------------------------------------------
+        # Prediction
+        # --------------------------------------------------------
+
+        "predicted_yield":
+            predicted_yield,
+
+        "predicted_total_production":
+            predicted_total_production,
+
+        "predicted_tonnes":
+            predicted_tonnes,
+
+
+        # --------------------------------------------------------
+        # Recommendations
+        # --------------------------------------------------------
+
+        "top_recommendations":
+            top_recommendations,
+
+        "crop_suitable":
+            crop_suitable,
+
+
+        # --------------------------------------------------------
+        # Status
+        # --------------------------------------------------------
+
+        "prediction_done":
+            prediction_done,
+
         "error":
-            error,
+            error
+    }
+
+
+    # ============================================================
+    # RENDER
+    # ============================================================
+
+    return render(
+
+        request,
+
+        "yield_prediction.html",
+
+        context
+
+    )
+
+
+# ============================================================
+# PRODUCTION & LAND CALCULATOR — TOOL 1
+# ============================================================
+
+def production_land_calculator(request):
+
+    # ========================================================
+    # DEFAULT VALUES
+    # ========================================================
+
+    tool1_result = False
+
+    tool1_error = None
+
+    tool1_crop = ""
+
+    tool1_desired_production = ""
+
+    tool1_production_unit = "kg"
+
+    tool1_available_land = ""
+
+    tool1_land_unit = "cent"
+
+    tool1_required_cent = 0
+
+    tool1_required_acre = 0
+
+    tool1_required_hectare = 0
+
+    tool1_land_sufficient = False
+
+    tool1_extra_cent = 0
+
+    tool1_extra_acre = 0
+
+    tool1_extra_hectare = 0
+
+
+    # ========================================================
+    # POST
+    # ========================================================
+
+    if request.method == "POST":
+
+        crop = request.POST.get(
+            "crop",
+            ""
+        ).strip()
+
+        available_land_value = request.POST.get(
+            "available_land",
+            ""
+        ).strip()
+
+        land_unit = request.POST.get(
+            "land_unit",
+            "cent"
+        ).strip().lower()
+
+        desired_production_value = request.POST.get(
+            "desired_production",
+            ""
+        ).strip()
+
+        production_unit = request.POST.get(
+            "production_unit",
+            "kg"
+        ).strip().lower()
+
+
+        # ====================================================
+        # KEEP FORM VALUES
+        # ====================================================
+
+        tool1_crop = crop
+
+        tool1_available_land = (
+            available_land_value
+        )
+
+        tool1_land_unit = land_unit
+
+        tool1_desired_production = (
+            desired_production_value
+        )
+
+        tool1_production_unit = (
+            production_unit
+        )
+
+
+        # ====================================================
+        # VALIDATION
+        # ====================================================
+
+        if not crop:
+
+            tool1_error = (
+                "Please select a crop."
+            )
+
+        elif crop not in CROP_LIST:
+
+            tool1_error = (
+                "Please select a valid crop."
+            )
+
+        elif not available_land_value:
+
+            tool1_error = (
+                "Please enter available land."
+            )
+
+        elif not desired_production_value:
+
+            tool1_error = (
+                "Please enter desired production."
+            )
+
+        elif land_unit not in [
+
+            "cent",
+            "acre",
+            "hectare"
+
+        ]:
+
+            tool1_error = (
+                "Invalid land unit."
+            )
+
+        elif production_unit not in [
+
+            "kg",
+            "tonne"
+
+        ]:
+
+            tool1_error = (
+                "Invalid production unit."
+            )
+
+        elif production_yield_model is None:
+
+            tool1_error = (
+                "Random Forest production model "
+                "could not be loaded."
+            )
+
+        else:
+
+            try:
+
+                available_land = float(
+                    available_land_value
+                )
+
+                desired_production = float(
+                    desired_production_value
+                )
+
+
+                # =================================================
+                # VALIDATE NUMBERS
+                # =================================================
+
+                if available_land < 0:
+
+                    raise ValueError(
+                        "Available land cannot be negative."
+                    )
+
+                if desired_production <= 0:
+
+                    raise ValueError(
+                        "Desired production must be "
+                        "greater than 0."
+                    )
+
+
+                # =================================================
+                # TOOL 1 MODEL
+                # =================================================
+
+                prediction_data = pd.DataFrame({
+
+                    "Crop": [
+                        crop
+                    ]
+
+                })
+
+
+                predicted_yield = (
+
+                    production_yield_model
+                    .predict(
+                        prediction_data
+                    )[0]
+
+                )
+
+
+                predicted_yield = float(
+                    predicted_yield
+                )
+
+
+                if predicted_yield <= 0:
+
+                    raise ValueError(
+                        "The Random Forest production model "
+                        "returned an invalid yield."
+                    )
+
+
+                # =================================================
+                # DESIRED PRODUCTION → KG
+                # =================================================
+
+                if production_unit == "tonne":
+
+                    desired_kg = (
+
+                        desired_production
+                        *
+                        1000
+
+                    )
+
+                else:
+
+                    desired_kg = (
+                        desired_production
+                    )
+
+
+                # =================================================
+                # LAND → HECTARE
+                # =================================================
+
+                if land_unit == "cent":
+
+                    available_hectare = (
+
+                        available_land
+                        /
+                        247.105
+
+                    )
+
+                elif land_unit == "acre":
+
+                    available_hectare = (
+
+                        available_land
+                        *
+                        0.404686
+
+                    )
+
+                else:
+
+                    available_hectare = (
+                        available_land
+                    )
+
+
+                # =================================================
+                # REQUIRED LAND
+                # =================================================
+
+                required_hectare = (
+
+                    desired_kg
+                    /
+                    predicted_yield
+
+                )
+
+
+                required_cent = (
+
+                    required_hectare
+                    *
+                    247.105
+
+                )
+
+
+                required_acre = (
+
+                    required_hectare
+                    /
+                    0.404686
+
+                )
+
+
+                # =================================================
+                # LAND SUFFICIENCY
+                # =================================================
+
+                land_sufficient = (
+
+                    available_hectare
+                    >=
+                    required_hectare
+
+                )
+
+
+                # =================================================
+                # EXTRA LAND
+                # =================================================
+
+                extra_hectare = max(
+
+                    required_hectare
+                    -
+                    available_hectare,
+
+                    0
+
+                )
+
+
+                extra_cent = (
+
+                    extra_hectare
+                    *
+                    247.105
+
+                )
+
+
+                extra_acre = (
+
+                    extra_hectare
+                    /
+                    0.404686
+
+                )
+
+
+                # =================================================
+                # STORE
+                # =================================================
+
+                tool1_required_hectare = round(
+                    required_hectare,
+                    2
+                )
+
+                tool1_required_cent = round(
+                    required_cent,
+                    2
+                )
+
+                tool1_required_acre = round(
+                    required_acre,
+                    2
+                )
+
+                tool1_extra_hectare = round(
+                    extra_hectare,
+                    2
+                )
+
+                tool1_extra_cent = round(
+                    extra_cent,
+                    2
+                )
+
+                tool1_extra_acre = round(
+                    extra_acre,
+                    2
+                )
+
+                tool1_land_sufficient = (
+                    land_sufficient
+                )
+
+                tool1_result = True
+
+
+            except ValueError as e:
+
+                tool1_error = str(e)
+
+            except Exception as e:
+
+                tool1_error = (
+                    f"Prediction error: {str(e)}"
+                )
+
+
+    # ========================================================
+    # CONTEXT
+    # ========================================================
+
+    context = {
+
+        "crop_list":
+            CROP_LIST,
+
+        "tool1_result":
+            tool1_result,
+
+        "tool1_error":
+            tool1_error,
+
+        "tool1_crop":
+            tool1_crop,
+
+        "tool1_desired_production":
+            tool1_desired_production,
+
+        "tool1_production_unit":
+            tool1_production_unit,
+
+        "tool1_available_land":
+            tool1_available_land,
+
+        "tool1_land_unit":
+            tool1_land_unit,
+
+        "tool1_required_cent":
+            tool1_required_cent,
+
+        "tool1_required_acre":
+            tool1_required_acre,
+
+        "tool1_required_hectare":
+            tool1_required_hectare,
+
+        "tool1_land_sufficient":
+            tool1_land_sufficient,
+
+        "tool1_extra_cent":
+            tool1_extra_cent,
+
+        "tool1_extra_acre":
+            tool1_extra_acre,
+
+        "tool1_extra_hectare":
+            tool1_extra_hectare
     }
 
 
     return render(
+
         request,
-        "yield_prediction.html",
+
+        "index.html",
+
         context
+
     )
 
 
@@ -1048,8 +1507,13 @@ def yield_prediction(request):
 
 def get_weather(request):
 
-    latitude = request.GET.get("lat")
-    longitude = request.GET.get("lon")
+    latitude = request.GET.get(
+        "lat"
+    )
+
+    longitude = request.GET.get(
+        "lon"
+    )
 
 
     if not latitude or not longitude:
@@ -1091,29 +1555,42 @@ def get_weather(request):
                 "mm",
 
             "timezone":
-                "auto",
+                "auto"
         }
 
 
         response = requests.get(
+
             url,
+
             params=params,
+
             timeout=15
+
         )
+
 
         response.raise_for_status()
 
-        weather_data = response.json()
+
+        weather_data = (
+            response.json()
+        )
+
 
         current = weather_data.get(
+
             "current",
+
             {}
+
         )
 
 
         return JsonResponse({
 
-            "success": True,
+            "success":
+                True,
 
             "temperature":
                 current.get(
@@ -1129,7 +1606,8 @@ def get_weather(request):
                 current.get(
                     "precipitation",
                     0
-                ),
+                )
+
         })
 
 
@@ -1137,7 +1615,8 @@ def get_weather(request):
 
         return JsonResponse({
 
-            "success": False,
+            "success":
+                False,
 
             "error":
                 "Could not connect to weather service."
@@ -1152,9 +1631,11 @@ def get_weather(request):
             e
         )
 
+
         return JsonResponse({
 
-            "success": False,
+            "success":
+                False,
 
             "error":
                 "Weather service error."

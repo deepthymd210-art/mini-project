@@ -1,32 +1,26 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Crop Yield Prediction | Kerala Crop AI
-    </title>
+    <title>Crop Yield Prediction | Kerala Crop AI</title>
 
     <link rel="stylesheet"
           href="{% static 'css/style.css' %}">
-
 </head>
 
 
 <body>
 
-
-<!-- ======================================================
+<!-- =========================================================
      NAVBAR
-====================================================== -->
+========================================================= -->
 
 <nav class="navbar">
 
@@ -50,10 +44,9 @@
 </nav>
 
 
-
-<!-- ======================================================
+<!-- =========================================================
      PAGE HEADER
-====================================================== -->
+========================================================= -->
 
 <section class="page-header">
 
@@ -73,17 +66,16 @@
 </section>
 
 
-
-<!-- ======================================================
+<!-- =========================================================
      PREDICTION SECTION
-====================================================== -->
+========================================================= -->
 
 <section class="prediction-section">
 
     <div class="prediction-card">
 
 
-        <!-- ==================================================
+        <!-- =================================================
              FORM
         ================================================== -->
 
@@ -93,7 +85,7 @@
             {% csrf_token %}
 
 
-            <!-- ==================================================
+            <!-- =================================================
                  CROP INFORMATION
             ================================================== -->
 
@@ -122,120 +114,122 @@
                     Crop
                 </label>
 
-                <select name="crop" required>
+                <select name="crop"
+                        id="crop"
+                        required>
 
                     <option value="">
                         Select Crop
                     </option>
 
-                    <option value="Tapioca"
-                        {% if request.POST.crop == "Tapioca" %}selected{% endif %}>
-                        Tapioca
-                    </option>
-
-                    <option value="Paddy"
-                        {% if request.POST.crop == "Paddy" %}selected{% endif %}>
-                        Paddy
-                    </option>
-
-                    <option value="Turmeric"
-                        {% if request.POST.crop == "Turmeric" %}selected{% endif %}>
-                        Turmeric
-                    </option>
-
-                    <option value="Coffee"
-                        {% if request.POST.crop == "Coffee" %}selected{% endif %}>
-                        Coffee
-                    </option>
-
-                    <option value="Rubber"
-                        {% if request.POST.crop == "Rubber" %}selected{% endif %}>
-                        Rubber
-                    </option>
-
-                    <option value="Plantain"
-                        {% if request.POST.crop == "Plantain" %}selected{% endif %}>
-                        Plantain
-                    </option>
-
-                    <option value="Betel leaves"
-                        {% if request.POST.crop == "Betel leaves" %}selected{% endif %}>
-                        Betel Leaves
-                    </option>
-
-                    <option value="Cocoa"
-                        {% if request.POST.crop == "Cocoa" %}selected{% endif %}>
-                        Cocoa
-                    </option>
-
-                    <option value="Cardamom"
-                        {% if request.POST.crop == "Cardamom" %}selected{% endif %}>
-                        Cardamom
-                    </option>
-
-                    <option value="Pappaya"
-                        {% if request.POST.crop == "Pappaya" %}selected{% endif %}>
-                        Pappaya
-                    </option>
-
-                    <option value="Coconut"
-                        {% if request.POST.crop == "Coconut" %}selected{% endif %}>
-                        Coconut
-                    </option>
-
-                    <option value="Mango"
-                        {% if request.POST.crop == "Mango" %}selected{% endif %}>
-                        Mango
-                    </option>
-
-                    <option value="Jack"
-                        {% if request.POST.crop == "Jack" %}selected{% endif %}>
-                        Jack
-                    </option>
-
-                    <option value="Banana"
-                        {% if request.POST.crop == "Banana" %}selected{% endif %}>
-                        Banana
-                    </option>
-
-                    <option value="Ginger"
-                        {% if request.POST.crop == "Ginger" %}selected{% endif %}>
-                        Ginger
-                    </option>
-
-                    <option value="Cloves"
-                        {% if request.POST.crop == "Cloves" %}selected{% endif %}>
-                        Cloves
-                    </option>
-
-                    <option value="Nutmeg"
-                        {% if request.POST.crop == "Nutmeg" %}selected{% endif %}>
-                        Nutmeg
-                    </option>
-
                     <option value="Arecanut"
-                        {% if request.POST.crop == "Arecanut" %}selected{% endif %}>
+                        {% if crop == "Arecanut" %}selected{% endif %}>
                         Arecanut
                     </option>
 
-                    <option value="Pepper"
-                        {% if request.POST.crop == "Pepper" %}selected{% endif %}>
-                        Pepper
+                    <option value="Banana"
+                        {% if crop == "Banana" %}selected{% endif %}>
+                        Banana
+                    </option>
+
+                    <option value="Betel leaves"
+                        {% if crop == "Betel leaves" %}selected{% endif %}>
+                        Betel Leaves
+                    </option>
+
+                    <option value="Cardamom"
+                        {% if crop == "Cardamom" %}selected{% endif %}>
+                        Cardamom
                     </option>
 
                     <option value="Cashew"
-                        {% if request.POST.crop == "Cashew" %}selected{% endif %}>
+                        {% if crop == "Cashew" %}selected{% endif %}>
                         Cashew
                     </option>
 
+                    <option value="Cloves"
+                        {% if crop == "Cloves" %}selected{% endif %}>
+                        Cloves
+                    </option>
+
+                    <option value="Cocoa"
+                        {% if crop == "Cocoa" %}selected{% endif %}>
+                        Cocoa
+                    </option>
+
+                    <option value="Coconut"
+                        {% if crop == "Coconut" %}selected{% endif %}>
+                        Coconut
+                    </option>
+
+                    <option value="Coffee"
+                        {% if crop == "Coffee" %}selected{% endif %}>
+                        Coffee
+                    </option>
+
+                    <option value="Ginger"
+                        {% if crop == "Ginger" %}selected{% endif %}>
+                        Ginger
+                    </option>
+
+                    <option value="Jack"
+                        {% if crop == "Jack" %}selected{% endif %}>
+                        Jack
+                    </option>
+
+                    <option value="Mango"
+                        {% if crop == "Mango" %}selected{% endif %}>
+                        Mango
+                    </option>
+
+                    <option value="Nutmeg"
+                        {% if crop == "Nutmeg" %}selected{% endif %}>
+                        Nutmeg
+                    </option>
+
+                    <option value="Paddy"
+                        {% if crop == "Paddy" %}selected{% endif %}>
+                        Paddy
+                    </option>
+
+                    <option value="Pappaya"
+                        {% if crop == "Pappaya" %}selected{% endif %}>
+                        Pappaya
+                    </option>
+
+                    <option value="Pepper"
+                        {% if crop == "Pepper" %}selected{% endif %}>
+                        Pepper
+                    </option>
+
                     <option value="Pineapple"
-                        {% if request.POST.crop == "Pineapple" %}selected{% endif %}>
+                        {% if crop == "Pineapple" %}selected{% endif %}>
                         Pineapple
                     </option>
 
+                    <option value="Plantain"
+                        {% if crop == "Plantain" %}selected{% endif %}>
+                        Plantain
+                    </option>
+
+                    <option value="Rubber"
+                        {% if crop == "Rubber" %}selected{% endif %}>
+                        Rubber
+                    </option>
+
+                    <option value="Tapioca"
+                        {% if crop == "Tapioca" %}selected{% endif %}>
+                        Tapioca
+                    </option>
+
                     <option value="Tea"
-                        {% if request.POST.crop == "Tea" %}selected{% endif %}>
+                        {% if crop == "Tea" %}selected{% endif %}>
                         Tea
+                    </option>
+
+                    <option value="Turmeric"
+                        {% if crop == "Turmeric" %}selected{% endif %}>
+                        Turmeric
                     </option>
 
                 </select>
@@ -243,8 +237,7 @@
             </div>
 
 
-
-            <!-- ==================================================
+            <!-- =================================================
                  LAND AREA
             ================================================== -->
 
@@ -277,9 +270,10 @@
 
                     <input type="number"
                            name="area"
+                           id="area"
                            step="0.01"
                            min="0"
-                           value="{{ request.POST.area }}"
+                           value="{{ area_value }}"
                            placeholder="Example: 20"
                            required>
 
@@ -292,24 +286,26 @@
                         Unit
                     </label>
 
-                    <select name="area_unit" required>
+                    <select name="area_unit"
+                            id="area_unit"
+                            required>
 
                         <option value="">
                             Select Unit
                         </option>
 
                         <option value="hectare"
-                            {% if request.POST.area_unit == "hectare" %}selected{% endif %}>
+                            {% if area_unit == "hectare" %}selected{% endif %}>
                             Hectare
                         </option>
 
                         <option value="acre"
-                            {% if request.POST.area_unit == "acre" %}selected{% endif %}>
+                            {% if area_unit == "acre" %}selected{% endif %}>
                             Acre
                         </option>
 
                         <option value="cent"
-                            {% if request.POST.area_unit == "cent" %}selected{% endif %}>
+                            {% if area_unit == "cent" %}selected{% endif %}>
                             Cent
                         </option>
 
@@ -320,8 +316,7 @@
             </div>
 
 
-
-            <!-- ==================================================
+            <!-- =================================================
                  SOIL INFORMATION
             ================================================== -->
 
@@ -347,35 +342,39 @@
             <div class="form-grid">
 
 
+                <!-- SOIL TYPE -->
+
                 <div class="form-group">
 
                     <label>
                         Soil Type
                     </label>
 
-                    <select name="soil_type" required>
+                    <select name="soil_type"
+                            id="soil_type"
+                            required>
 
                         <option value="">
                             Select Soil Type
                         </option>
 
                         <option value="Loamy"
-                            {% if request.POST.soil_type == "Loamy" %}selected{% endif %}>
+                            {% if soil_type == "Loamy" %}selected{% endif %}>
                             Loamy
                         </option>
 
                         <option value="Clay"
-                            {% if request.POST.soil_type == "Clay" %}selected{% endif %}>
+                            {% if soil_type == "Clay" %}selected{% endif %}>
                             Clay
                         </option>
 
                         <option value="Sandy"
-                            {% if request.POST.soil_type == "Sandy" %}selected{% endif %}>
+                            {% if soil_type == "Sandy" %}selected{% endif %}>
                             Sandy
                         </option>
 
                         <option value="Silty"
-                            {% if request.POST.soil_type == "Silty" %}selected{% endif %}>
+                            {% if soil_type == "Silty" %}selected{% endif %}>
                             Silty
                         </option>
 
@@ -383,6 +382,8 @@
 
                 </div>
 
+
+                <!-- SOIL PH -->
 
                 <div class="form-group">
 
@@ -392,15 +393,18 @@
 
                     <input type="number"
                            name="soil_ph"
+                           id="soil_ph"
                            step="0.01"
                            min="0"
                            max="14"
-                           value="{{ request.POST.soil_ph }}"
+                           value="{{ soil_ph }}"
                            placeholder="Example: 6.5"
                            required>
 
                 </div>
 
+
+                <!-- NITROGEN -->
 
                 <div class="form-group">
 
@@ -410,13 +414,17 @@
 
                     <input type="number"
                            name="nitrogen"
+                           id="nitrogen"
                            step="0.01"
-                           value="{{ request.POST.nitrogen }}"
+                           min="0"
+                           value="{{ nitrogen }}"
                            placeholder="Example: 80"
                            required>
 
                 </div>
 
+
+                <!-- PHOSPHORUS -->
 
                 <div class="form-group">
 
@@ -426,13 +434,17 @@
 
                     <input type="number"
                            name="phosphorus"
+                           id="phosphorus"
                            step="0.01"
-                           value="{{ request.POST.phosphorus }}"
+                           min="0"
+                           value="{{ phosphorus }}"
                            placeholder="Example: 40"
                            required>
 
                 </div>
 
+
+                <!-- POTASSIUM -->
 
                 <div class="form-group">
 
@@ -442,8 +454,10 @@
 
                     <input type="number"
                            name="potassium"
+                           id="potassium"
                            step="0.01"
-                           value="{{ request.POST.potassium }}"
+                           min="0"
+                           value="{{ potassium }}"
                            placeholder="Example: 50"
                            required>
 
@@ -452,131 +466,120 @@
             </div>
 
 
-<!-- =====================================================
-     WEATHER CONDITIONS
-===================================================== -->
+            <!-- =================================================
+                 WEATHER CONDITIONS
+            ================================================== -->
 
-<!-- ==================================================
-     WEATHER CONDITIONS
-================================================== -->
+            <div class="section-title">
 
-<div class="section-title">
+                <span>☁️</span>
 
-    <span>☁️</span>
+                <div>
 
-    <div>
+                    <h2>
+                        Weather Conditions
+                    </h2>
 
-        <h2>
-            Weather Conditions
-        </h2>
+                    <p>
+                        Enter current conditions or get weather automatically
+                    </p>
 
-        <p>
-            Enter current conditions or get weather automatically
-        </p>
+                </div>
 
-    </div>
-
-</div>
+            </div>
 
 
-<!-- ==================================================
-     GET LOCATION WEATHER
-================================================== -->
+            <!-- =================================================
+                 WEATHER LOCATION BUTTON
+            ================================================== -->
 
-<div class="weather-location-box">
+            <div class="weather-location-box">
 
-    <button
-        type="button"
-        class="weather-button"
-        id="getWeatherButton">
+                <button type="button"
+                        class="weather-button"
+                        id="getWeatherButton">
 
-        📍 Get Weather From My Location
+                    📍 Get Weather From My Location
 
-    </button>
-
-    <p
-        id="weatherStatus"
-        class="weather-status">
-
-        Click the button to get your current weather.
-
-    </p>
-
-</div>
+                </button>
 
 
-<div class="form-grid">
+                <p id="weatherStatus"
+                   class="weather-status">
+
+                    Click the button to get your current weather.
+
+                </p>
+
+            </div>
 
 
-    <!-- ==================================================
-         RAINFALL
-    ================================================== -->
-
-    <div class="form-group">
-
-        <label>
-            Rainfall (mm)
-        </label>
-
-        <input
-            type="number"
-            name="rainfall"
-            id="rainfall"
-            step="0.01"
-            value="{{ request.POST.rainfall }}"
-            placeholder="Example: 1800"
-            required>
-
-    </div>
+            <div class="form-grid">
 
 
-    <!-- ==================================================
-         TEMPERATURE
-    ================================================== -->
+                <!-- RAINFALL -->
 
-    <div class="form-group">
+                <div class="form-group">
 
-        <label>
-            Temperature (°C)
-        </label>
+                    <label>
+                        Rainfall (mm)
+                    </label>
 
-        <input
-            type="number"
-            name="temperature"
-            id="temperature"
-            step="0.01"
-            value="{{ request.POST.temperature }}"
-            placeholder="Example: 27"
-            required>
+                    <input type="number"
+                           name="rainfall"
+                           id="rainfall"
+                           step="0.01"
+                           min="0"
+                           value="{{ rainfall }}"
+                           placeholder="Example: 1800"
+                           required>
 
-    </div>
+                </div>
 
 
-    <!-- ==================================================
-         HUMIDITY
-    ================================================== -->
+                <!-- TEMPERATURE -->
 
-    <div class="form-group">
+                <div class="form-group">
 
-        <label>
-            Humidity (%)
-        </label>
+                    <label>
+                        Temperature (°C)
+                    </label>
 
-        <input
-            type="number"
-            name="humidity"
-            id="humidity"
-            step="0.01"
-            min="0"
-            max="100"
-            value="{{ request.POST.humidity }}"
-            placeholder="Example: 80"
-            required>
+                    <input type="number"
+                           name="temperature"
+                           id="temperature"
+                           step="0.01"
+                           value="{{ temperature }}"
+                           placeholder="Example: 27"
+                           required>
 
-    </div>
+                </div>
 
-</div>
-            <!-- ==================================================
+
+                <!-- HUMIDITY -->
+
+                <div class="form-group">
+
+                    <label>
+                        Humidity (%)
+                    </label>
+
+                    <input type="number"
+                           name="humidity"
+                           id="humidity"
+                           step="0.01"
+                           min="0"
+                           max="100"
+                           value="{{ humidity }}"
+                           placeholder="Example: 80"
+                           required>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
                  FARMING CONDITIONS
             ================================================== -->
 
@@ -602,30 +605,34 @@
             <div class="form-grid">
 
 
+                <!-- IRRIGATION -->
+
                 <div class="form-group">
 
                     <label>
                         Irrigation Level
                     </label>
 
-                    <select name="irrigation" required>
+                    <select name="irrigation"
+                            id="irrigation"
+                            required>
 
                         <option value="">
                             Select Irrigation
                         </option>
 
                         <option value="Low"
-                            {% if request.POST.irrigation == "Low" %}selected{% endif %}>
+                            {% if irrigation == "Low" %}selected{% endif %}>
                             Low
                         </option>
 
                         <option value="Medium"
-                            {% if request.POST.irrigation == "Medium" %}selected{% endif %}>
+                            {% if irrigation == "Medium" %}selected{% endif %}>
                             Medium
                         </option>
 
                         <option value="High"
-                            {% if request.POST.irrigation == "High" %}selected{% endif %}>
+                            {% if irrigation == "High" %}selected{% endif %}>
                             High
                         </option>
 
@@ -634,25 +641,29 @@
                 </div>
 
 
+                <!-- SEASON -->
+
                 <div class="form-group">
 
                     <label>
                         Season
                     </label>
 
-                    <select name="season" required>
+                    <select name="season"
+                            id="season"
+                            required>
 
                         <option value="">
                             Select Season
                         </option>
 
                         <option value="Kharif"
-                            {% if request.POST.season == "Kharif" %}selected{% endif %}>
+                            {% if season == "Kharif" %}selected{% endif %}>
                             Kharif
                         </option>
 
                         <option value="Perennial"
-                            {% if request.POST.season == "Perennial" %}selected{% endif %}>
+                            {% if season == "Perennial" %}selected{% endif %}>
                             Perennial
                         </option>
 
@@ -663,8 +674,7 @@
             </div>
 
 
-
-            <!-- ==================================================
+            <!-- =================================================
                  PREDICT BUTTON
             ================================================== -->
 
@@ -681,9 +691,8 @@
         </form>
 
 
-
-        <!-- ==================================================
-             ERROR
+        <!-- =================================================
+             ERROR RESULT
         ================================================== -->
 
         {% if error %}
@@ -712,16 +721,19 @@
         {% endif %}
 
 
-
-        <!-- ==================================================
-             CURRENT CROP RESULT
+        <!-- =================================================
+             PREDICTION RESULT
         ================================================== -->
 
-        {% if predicted_yield != None %}
+        {% if prediction_done %}
 
         <div class="result-container"
              id="predictionResult">
 
+
+            <!-- =================================================
+                 RESULT HEADER
+            ================================================== -->
 
             <div class="result-heading">
 
@@ -749,13 +761,14 @@
             </div>
 
 
-
-            <!-- ==================================================
+            <!-- =================================================
                  CURRENT CROP DETAILS
             ================================================== -->
 
             <div class="result-info">
 
+
+                <!-- CROP -->
 
                 <div class="result-item">
 
@@ -770,13 +783,15 @@
                         </span>
 
                         <strong>
-                            {{ request.POST.crop }}
+                            {{ crop }}
                         </strong>
 
                     </div>
 
                 </div>
 
+
+                <!-- AREA -->
 
                 <div class="result-item">
 
@@ -800,6 +815,8 @@
                 </div>
 
 
+                <!-- TOTAL PRODUCTION -->
+
                 <div class="result-item">
 
                     <span class="result-emoji">
@@ -813,13 +830,16 @@
                         </span>
 
                         <strong>
-                            {{ predicted_yield|floatformat:2 }} kg
+                            {{ predicted_total_production|floatformat:2 }}
+                            kg
                         </strong>
 
                     </div>
 
                 </div>
 
+
+                <!-- TONNES -->
 
                 <div class="result-item">
 
@@ -845,74 +865,73 @@
             </div>
 
 
-
-            <!-- ==================================================
-                 SUITABILITY
+            <!-- =================================================
+                 SELECTED CROP SUITABILITY
             ================================================== -->
 
-            <div id="cropSuitabilityResult">
+            {% if crop_suitable %}
 
-                {% if crop_suitable %}
+            <div class="suitable-result">
 
-                <div class="suitable-result">
-
-                    <div class="status-icon">
-                        ✓
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Crop is Suitable
-                        </h3>
-
-                        <p>
-                            The selected crop
-                            <strong>
-                                {{ request.POST.crop }}
-                            </strong>
-                            is recommended for these conditions.
-                        </p>
-
-                    </div>
-
+                <div class="status-icon">
+                    ✓
                 </div>
 
-                {% else %}
+                <div>
 
-                <div class="not-suitable-result">
+                    <h3>
+                        Crop is Suitable
+                    </h3>
 
-                    <div class="status-icon">
-                        !
-                    </div>
+                    <p>
 
-                    <div>
+                        The selected crop
+                        <strong>
+                            {{ crop }}
+                        </strong>
+                        is among the top predicted crops
+                        for the conditions entered.
 
-                        <h3>
-                            Another Crop May Be Better
-                        </h3>
-
-                        <p>
-                            The selected crop
-                            <strong>
-                                {{ request.POST.crop }}
-                            </strong>
-                            is not among the top recommended
-                            crops for these conditions.
-                        </p>
-
-                    </div>
+                    </p>
 
                 </div>
-
-                {% endif %}
 
             </div>
 
+            {% else %}
+
+            <div class="not-suitable-result">
+
+                <div class="status-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <h3>
+                        Another Crop May Be Better
+                    </h3>
+
+                    <p>
+
+                        The selected crop
+                        <strong>
+                            {{ crop }}
+                        </strong>
+                        is not among the top predicted crops
+                        for these conditions.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
 
 
-            <!-- ==================================================
-                 TOP 3 CROP RECOMMENDATIONS
+            <!-- =================================================
+                 TOP 3 CROP PREDICTIONS
             ================================================== -->
 
             {% if top_recommendations %}
@@ -931,18 +950,17 @@
                     <div>
 
                         <span class="recommended-production-label">
-                            TOP CROP RECOMMENDATIONS
+                            TOP CROP PREDICTIONS
                         </span>
 
                         <h3>
-                            Best Crops for Your Conditions
+                            Highest Predicted Production
                         </h3>
 
                         <p>
-                            The crop recommendation model
-                            ranks the most suitable crops,
-                            while the yield model estimates
-                            their production.
+                            These crops produced the highest
+                            predicted production under the
+                            same farming conditions.
                         </p>
 
                     </div>
@@ -950,27 +968,25 @@
                 </div>
 
 
-
-                <!-- ==================================================
-                     TOP 3
+                <!-- =================================================
+                     TOP 3 LIST
                 ================================================== -->
 
                 <div class="top-crop-list">
 
-
                     {% for item in top_recommendations %}
 
-                    <div class="top-crop-card"
-                         data-recommended-crop="{{ item.crop|lower|escape }}">
-
+                    <div class="top-crop-card">
 
                         <div class="top-crop-rank">
 
                             {% if item.rank == 1 %}
-                                🏆
+                                🥇
                             {% elif item.rank == 2 %}
-                                🏆
+                                🥈
                             {% elif item.rank == 3 %}
+                                🥉
+                            {% else %}
                                 🏆
                             {% endif %}
 
@@ -981,13 +997,7 @@
 
                             <span class="top-crop-label">
 
-                                {% if item.rank == 1 %}
-                                    Best Crop
-                                {% elif item.rank == 2 %}
-                                    Best Crop
-                                {% elif item.rank == 3 %}
-                                    Best Crop
-                                {% endif %}
+                                Rank {{ item.rank }}
 
                             </span>
 
@@ -1014,9 +1024,7 @@
                             <div class="top-crop-tonnes">
 
                                 ⚖️
-
                                 {{ item.tonnes|floatformat:2 }}
-
                                 tonnes
 
                             </div>
@@ -1027,7 +1035,6 @@
 
                     {% endfor %}
 
-
                 </div>
 
             </div>
@@ -1035,8 +1042,7 @@
             {% endif %}
 
 
-
-            <!-- ==================================================
+            <!-- =================================================
                  TRY AGAIN
             ================================================== -->
 
@@ -1058,150 +1064,452 @@
 
 </section>
 
+
+<!-- =========================================================
+     WEATHER JAVASCRIPT
+========================================================= -->
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    const weatherButton = document.getElementById("getWeatherButton");
-    const weatherStatus = document.getElementById("weatherStatus");
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    const rainfallInput = document.getElementById("rainfall");
-    const temperatureInput = document.getElementById("temperature");
-    const humidityInput = document.getElementById("humidity");
+        const weatherButton =
+            document.getElementById(
+                "getWeatherButton"
+            );
 
-    if (!weatherButton) return;
+        const weatherStatus =
+            document.getElementById(
+                "weatherStatus"
+            );
 
-    weatherButton.addEventListener("click", function () {
+        const rainfallInput =
+            document.getElementById(
+                "rainfall"
+            );
 
-        if (!navigator.geolocation) {
-            weatherStatus.textContent =
-                "❌ Geolocation is not supported by your browser.";
+        const temperatureInput =
+            document.getElementById(
+                "temperature"
+            );
+
+        const humidityInput =
+            document.getElementById(
+                "humidity"
+            );
+
+
+        if (!weatherButton) {
             return;
         }
 
-        weatherButton.disabled = true;
-        weatherButton.textContent = "⏳ Getting Location...";
-        weatherStatus.textContent =
-            "Please allow location access in your browser.";
 
-        navigator.geolocation.getCurrentPosition(
+        weatherButton.addEventListener(
+            "click",
+            function () {
 
-            function (position) {
 
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
+                /* ============================================
+                   CHECK GEOLOCATION
+                ============================================ */
 
-                weatherButton.textContent = "⏳ Getting Weather...";
+                if (!navigator.geolocation) {
+
+                    weatherStatus.textContent =
+                        "❌ Geolocation is not supported by your browser.";
+
+                    return;
+                }
+
+
+                /* ============================================
+                   BUTTON STATUS
+                ============================================ */
+
+                weatherButton.disabled = true;
+
+                weatherButton.textContent =
+                    "⏳ Getting Location...";
+
                 weatherStatus.textContent =
-                    "Fetching current weather conditions...";
+                    "Please allow location access in your browser.";
 
-                // IMPORTANT:
-                // This Django template tag works because this code
-                // is inside yield_prediction.html.
-                const weatherURL =
-                    "{% url 'get_weather' %}" +
-                    "?lat=" + encodeURIComponent(latitude) +
-                    "&lon=" + encodeURIComponent(longitude);
 
-                console.log("Weather URL:", weatherURL);
+                /* ============================================
+                   GET LOCATION
+                ============================================ */
 
-                fetch(weatherURL)
+                navigator.geolocation.getCurrentPosition(
 
-                    .then(function (response) {
+                    function (position) {
 
-                        if (!response.ok) {
-                            throw new Error(
-                                "Weather request failed: " +
-                                response.status
-                            );
-                        }
+                        const latitude =
+                            position.coords.latitude;
 
-                        return response.json();
-                    })
+                        const longitude =
+                            position.coords.longitude;
 
-                    .then(function (data) {
-
-                        console.log("Weather data:", data);
-
-                        if (!data.success) {
-                            throw new Error(
-                                data.error ||
-                                "Unable to get weather data."
-                            );
-                        }
-
-                        temperatureInput.value = data.temperature;
-                        humidityInput.value = data.humidity;
-                        rainfallInput.value = data.rainfall;
-
-                        weatherStatus.innerHTML =
-                            "✅ Weather updated successfully." +
-                            "<br>" +
-                            "🌡️ " + data.temperature + " °C &nbsp; | &nbsp;" +
-                            "💧 " + data.humidity + " % &nbsp; | &nbsp;" +
-                            "🌧️ " + data.rainfall + " mm";
 
                         weatherButton.textContent =
-                            "📍 Update Weather";
-
-                        weatherButton.disabled = false;
-                    })
-
-                    .catch(function (error) {
-
-                        console.error("Weather error:", error);
+                            "⏳ Getting Weather...";
 
                         weatherStatus.textContent =
-                            "❌ " + error.message;
+                            "Fetching current weather conditions...";
+
+
+                        /* ====================================
+                           DJANGO WEATHER URL
+                        ==================================== */
+
+                        const weatherURL =
+                            "{% url 'get_weather' %}" +
+                            "?lat=" +
+                            encodeURIComponent(latitude) +
+                            "&lon=" +
+                            encodeURIComponent(longitude);
+
+
+                        console.log(
+                            "Weather URL:",
+                            weatherURL
+                        );
+
+
+                        /* ====================================
+                           WEATHER REQUEST
+                        ==================================== */
+
+                        fetch(weatherURL)
+
+                            .then(
+                                function (response) {
+
+                                    if (!response.ok) {
+
+                                        throw new Error(
+                                            "Weather request failed: " +
+                                            response.status
+                                        );
+
+                                    }
+
+                                    return response.json();
+
+                                }
+                            )
+
+
+                            .then(
+                                function (data) {
+
+                                    console.log(
+                                        "Weather data:",
+                                        data
+                                    );
+
+
+                                    if (!data.success) {
+
+                                        throw new Error(
+                                            data.error ||
+                                            "Unable to get weather data."
+                                        );
+
+                                    }
+
+
+                                    /* ==========================
+                                       UPDATE INPUTS
+                                    ========================== */
+
+                                    temperatureInput.value =
+                                        data.temperature;
+
+                                    humidityInput.value =
+                                        data.humidity;
+
+                                    rainfallInput.value =
+                                        data.rainfall;
+
+
+                                    /* ==========================
+                                       STATUS
+                                    ========================== */
+
+                                    weatherStatus.innerHTML =
+                                        "✅ Weather updated successfully." +
+                                        "<br>" +
+                                        "🌡️ " +
+                                        data.temperature +
+                                        " °C &nbsp; | &nbsp;" +
+                                        "💧 " +
+                                        data.humidity +
+                                        " % &nbsp; | &nbsp;" +
+                                        "🌧️ " +
+                                        data.rainfall +
+                                        " mm";
+
+
+                                    weatherButton.textContent =
+                                        "📍 Update Weather";
+
+                                    weatherButton.disabled =
+                                        false;
+
+                                }
+                            )
+
+
+                            .catch(
+                                function (error) {
+
+                                    console.error(
+                                        "Weather error:",
+                                        error
+                                    );
+
+
+                                    weatherStatus.textContent =
+                                        "❌ " +
+                                        error.message;
+
+
+                                    weatherButton.textContent =
+                                        "📍 Try Again";
+
+                                    weatherButton.disabled =
+                                        false;
+
+                                }
+                            );
+
+                    },
+
+
+                    /* ========================================
+                       LOCATION ERROR
+                    ======================================== */
+
+                    function (error) {
+
+                        console.error(
+                            "Location error:",
+                            error
+                        );
+
+
+                        let message =
+                            "❌ Unable to get your location.";
+
+
+                        if (
+                            error.code ===
+                            error.PERMISSION_DENIED
+                        ) {
+
+                            message =
+                                "❌ Location permission was denied. " +
+                                "Please allow location access and try again.";
+
+                        }
+
+                        else if (
+                            error.code ===
+                            error.POSITION_UNAVAILABLE
+                        ) {
+
+                            message =
+                                "❌ Your location is currently unavailable.";
+
+                        }
+
+                        else if (
+                            error.code ===
+                            error.TIMEOUT
+                        ) {
+
+                            message =
+                                "❌ Location request timed out. Please try again.";
+
+                        }
+
+
+                        weatherStatus.textContent =
+                            message;
+
 
                         weatherButton.textContent =
                             "📍 Try Again";
 
-                        weatherButton.disabled = false;
-                    });
-            },
+                        weatherButton.disabled =
+                            false;
 
-            function (error) {
+                    },
 
-                console.error("Location error:", error);
 
-                let message =
-                    "❌ Unable to get your location.";
+                    /* ========================================
+                       GEOLOCATION OPTIONS
+                    ======================================== */
 
-                if (error.code === error.PERMISSION_DENIED) {
-                    message =
-                        "❌ Location permission was denied. " +
-                        "Please allow location access and try again.";
-                }
-                else if (error.code === error.POSITION_UNAVAILABLE) {
-                    message =
-                        "❌ Your location is currently unavailable.";
-                }
-                else if (error.code === error.TIMEOUT) {
-                    message =
-                        "❌ Location request timed out. Please try again.";
-                }
+                    {
 
-                weatherStatus.textContent = message;
+                        enableHighAccuracy: true,
 
-                weatherButton.textContent = "📍 Try Again";
-                weatherButton.disabled = false;
-            },
+                        timeout: 15000,
 
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 300000
+                        maximumAge: 300000
+
+                    }
+
+                );
+
             }
+
         );
-    });
-});
+
+    }
+
+);
+
 </script>
 
 
+<!-- =========================================================
+     RESET / TRY AGAIN
+========================================================= -->
 
-<!-- ======================================================
-     JAVASCRIPT
-====================================================== -->
+<script>
+
+function resetPrediction() {
+
+    const form =
+        document.getElementById(
+            "predictionForm"
+        );
+
+
+    if (form) {
+
+        form.reset();
+
+    }
+
+
+    /* ==============================================
+       CLEAR ALL INPUT VALUES
+    ============================================== */
+
+    const inputs =
+        form.querySelectorAll(
+            "input"
+        );
+
+
+    inputs.forEach(
+        function (input) {
+
+            input.value = "";
+
+        }
+    );
+
+
+    /* ==============================================
+       RESET SELECT BOXES
+    ============================================== */
+
+    const selects =
+        form.querySelectorAll(
+            "select"
+        );
+
+
+    selects.forEach(
+        function (select) {
+
+            select.selectedIndex = 0;
+
+        }
+    );
+
+
+    /* ==============================================
+       REMOVE OLD RESULT
+    ============================================== */
+
+    const result =
+        document.getElementById(
+            "predictionResult"
+        );
+
+
+    if (result) {
+
+        result.remove();
+
+    }
+
+
+    /* ==============================================
+       RESET WEATHER MESSAGE
+    ============================================== */
+
+    const weatherStatus =
+        document.getElementById(
+            "weatherStatus"
+        );
+
+
+    if (weatherStatus) {
+
+        weatherStatus.textContent =
+            "Click the button to get your current weather.";
+
+    }
+
+
+    /* ==============================================
+       RESET WEATHER BUTTON
+    ============================================== */
+
+    const weatherButton =
+        document.getElementById(
+            "getWeatherButton"
+        );
+
+
+    if (weatherButton) {
+
+        weatherButton.disabled = false;
+
+        weatherButton.textContent =
+            "📍 Get Weather From My Location";
+
+    }
+
+
+    /* ==============================================
+       SCROLL TO FORM
+    ============================================== */
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+</script>
+
+
+<!-- =========================================================
+     MAIN JAVASCRIPT
+========================================================= -->
 
 <script src="{% static 'js/script.js' %}"></script>
 
